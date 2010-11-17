@@ -112,9 +112,9 @@ char *cut(UDF_INIT *initid, UDF_ARGS *args,
 	char *result, unsigned long *length,
 	char *is_null, char *error);
 
-my_bool makeurl_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void makeurl_deinit(UDF_INIT *initid);
-char *makeurl(UDF_INIT *initid, UDF_ARGS *args,
+my_bool slug_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
+void slug_deinit(UDF_INIT *initid);
+char *slug(UDF_INIT *initid, UDF_ARGS *args,
 	char *result, unsigned long *length,
 	char *is_null, char *error);
 
@@ -657,10 +657,10 @@ done:
     return result;
 }
 
-my_bool makeurl_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+my_bool slug_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
     if (1 != args->arg_count && 3 != args->arg_count) {
-	strcpy(message, "makeurl must have exaclty one argument");
+	strcpy(message, "slug must have exaclty one argument");
 	return 1;
     }
 
@@ -673,7 +673,7 @@ my_bool makeurl_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
     return 0;
 }
 
-char *makeurl(UDF_INIT *initid, UDF_ARGS *args,
+char *slug(UDF_INIT *initid, UDF_ARGS *args,
 	char *result, unsigned long *length,
 	char *is_null, char *error __attribute__((unused)))
 {
