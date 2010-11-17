@@ -208,7 +208,7 @@ long long invbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 
 my_bool numbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
-    if (1 != args->arg_count || 2 != args->arg_count) {
+    if (1 != args->arg_count && 2 != args->arg_count) {
 	strcpy(message, "numbit must have one or two one arguments");
 	return 1;
     }
@@ -231,7 +231,7 @@ long long numbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
     short c;
     long long bit = *((longlong *) args->args[0]);
 
-    if (NULL == args->args[1] || 0 == *((longlong *) args->args[1])) {
+    if (NULL != args->args[1] && 0 == *((longlong *) args->args[1])) {
 	bit = ~bit;
     }
 
@@ -480,8 +480,8 @@ double thumbratio(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 
 my_bool starratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
-    if (5 != args->arg_count) {
-	strcpy(message, "bound must have exactly five arguments");
+    if (args->arg_count < 2) {
+	strcpy(message, "bound must have at least two arguments");
 	return 1;
     }
 
@@ -497,21 +497,24 @@ double starratio(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	char *is_null,
 	char *error __attribute__((unused)))
 {
+    size_t i = args->arg_count;
+    longlong n = 0, d = 0;
 
-    if (NULL == args->args[0] || NULL == args->args[1] ||
-	    NULL == args->args[2] || NULL == args->args[3] ||
-	    NULL == args->args[4]) {
-	*is_null = 1;
+    while(i--) {
+
+	if (NULL == args->args[i]) {
+	    *is_null = 1;
+	    return 0;
+	}
+	n+= *((longlong *) args->args[i]) * ((longlong) i + 1);
+	d+= *((longlong *) args->args[i]);
+    }
+
+    if (!d) {
 	return 0;
     }
 
-    long long a = *((longlong *) args->args[0]);
-    long long b = *((longlong *) args->args[1]);
-    long long c = *((longlong *) args->args[2]);
-    long long d = *((longlong *) args->args[3]);
-    long long e = *((longlong *) args->args[4]);
-
-    return (a + 2 * b + 3 * c + 4 * d + 5 * e) / (double) (a + b + c + d + e);
+    return n / (double) d;
 }
 
 my_bool bound_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
