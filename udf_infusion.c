@@ -376,40 +376,53 @@ long long xround(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	char *is_null,
 	char *error __attribute__((unused)))
 {
-    static const long long map[] = {
-	1000000000000000000LL,
-	100000000000000000LL,
-	10000000000000000LL,
-	1000000000000000LL,
-	100000000000000LL,
-	10000000000000LL,
-	1000000000000LL,
-	100000000000LL,
-	10000000000LL,
-	1000000000LL,
-	100000000LL,
-	10000000LL,
-	1000000LL,
-	100000L,
-	10000LL,
-	1000LL,
-	100LL,
-	10LL,
-	1LL
-    };
-
-    size_t i;
+    long long n = *((longlong *) args->args[0]);
 
     if (NULL == args->args[0]) {
 	*is_null = 1;
 	return 0;
     }
 
-    long long n = *((longlong *) args->args[0]);
+    if (n > 1000000000LL) {
 
-    for (i = 1; i < 19; i++) {
-	if (n > map[i]) {
-	    return map[i - 1];
+	if (n > 100000000000000LL) {
+	    if (n > 10000000000000000LL) {
+		if (n <= 100000000000000000LL) return 100000000000000000LL;
+		if (n <= 1000000000000000000LL) return 1000000000000000000LL;
+		return 1000000000000000000LL;
+	    } else {
+		if (n <= 1000000000000000LL) return 1000000000000000LL;
+		return 10000000000000000LL;
+	    }
+	} else {
+	    if (n > 100000000000LL) {
+		if (n <= 1000000000000LL) return 1000000000000LL;
+		if (n <= 10000000000000LL) return 10000000000000LL;
+		return 100000000000000LL;
+	    } else {
+		if (n <= 10000000000LL) return 10000000000LL;
+		return 100000000000LL;
+	    }
+	}
+    } else {
+	if (n > 10000LL) {
+	    if (n > 1000000LL) {
+		if (n <= 10000000LL) return 10000000LL;
+		if (n <= 100000000LL) return 100000000LL;
+		return 1000000000LL;
+	    } else {
+		if (n <= 100000LL) return 100000LL;
+		return 1000000LL;
+	    }
+	} else {
+	    if (n > 100LL) {
+		if (n <= 1000LL) return 1000LL;
+		return 10000LL;
+	    } else {
+		if (n <= 1LL) return 1LL;
+		if (n <= 10LL) return 10LL;
+		return 100LL;
+	    }
 	}
     }
     return 1;
@@ -500,14 +513,14 @@ double starratio(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
     size_t i = args->arg_count;
     longlong n = 0, d = 0;
 
-    while(i--) {
+    while (i--) {
 
 	if (NULL == args->args[i]) {
 	    *is_null = 1;
 	    return 0;
 	}
-	n+= *((longlong *) args->args[i]) * ((longlong) i + 1);
-	d+= *((longlong *) args->args[i]);
+	n += *((longlong *) args->args[i]) * ((longlong) i + 1);
+	d += *((longlong *) args->args[i]);
     }
 
     if (!d) {
@@ -638,7 +651,7 @@ char *cut(UDF_INIT *initid, UDF_ARGS *args,
 		goto done;
 	    }
 	}
-done:
+    done:
 	if (-1 == i) {
 	    *length = sl < max ? sl : max;
 	} else {
@@ -703,75 +716,75 @@ char *slug(UDF_INIT *initid, UDF_ARGS *args,
 	    *(result++) = 's';
 	    add = 1;
 	    break;
-	case 196:   case 198:
-	case 228:   case 230:
+	case 196: case 198:
+	case 228: case 230:
 	    *(result++) = 'a';
 	    *(result++) = 'e';
 	    add = 1;
 	    break;
-	case 214:   case 246:
+	case 214: case 246:
 	    *(result++) = 'o';
 	    *(result++) = 'e';
 	    add = 1;
 	    break;
-	case 220:   case 252:
+	case 220: case 252:
 	    *(result++) = 'u';
 	    *(result++) = 'e';
 	    add = 1;
 	    break;
-	case 192:   case 193:
-	case 194:   case 195:
-	case 197:   case 224:
-	case 225:   case 226:
-	case 227:   case 229:
+	case 192: case 193:
+	case 194: case 195:
+	case 197: case 224:
+	case 225: case 226:
+	case 227: case 229:
 	    *(result++) = 'a';
 	    add = 1;
 	    break;
-	case 200:   case 201:
-	case 202:   case 203:
-	case 232:   case 233:
-	case 234:   case 235:
+	case 200: case 201:
+	case 202: case 203:
+	case 232: case 233:
+	case 234: case 235:
 	    *(result++) = 'e';
 	    add = 1;
 	    break;
-	case 161:   case 204:
-	case 205:   case 206:
-	case 207:   case 236:
-	case 237:   case 238:
+	case 161: case 204:
+	case 205: case 206:
+	case 207: case 236:
+	case 237: case 238:
 	case 239:
 	    *(result++) = 'i';
 	    add = 1;
 	    break;
-	case 210:   case 211:
-	case 212:   case 213:
-	case 240:   case 242:
-	case 243:   case 244:
+	case 210: case 211:
+	case 212: case 213:
+	case 240: case 242:
+	case 243: case 244:
 	case 245:
 	    *(result++) = 'o';
 	    add = 1;
 	    break;
-	case 181:   case 217:
-	case 218:   case 219:
-	case 249:   case 250:
+	case 181: case 217:
+	case 218: case 219:
+	case 249: case 250:
 	case 251:
 	    *(result++) = 'u';
 	    add = 1;
 	    break;
-	case 209:   case 241:
+	case 209: case 241:
 	    *(result++) = 'n';
 	    add = 1;
 	    break;
-	case 162:   case 169:
-	case 199:   case 231:
+	case 162: case 169:
+	case 199: case 231:
 	    *(result++) = 'c';
 	    add = 1;
 	    break;
-	case 222:   case 254:
+	case 222: case 254:
 	    *(result++) = 'p';
 	    add = 1;
 	    break;
-	case 165:   case 221:
-	case 253:   case 255:
+	case 165: case 221:
+	case 253: case 255:
 	    *(result++) = 'y';
 	    add = 1;
 	    break;
