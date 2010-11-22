@@ -74,10 +74,13 @@ my_bool getint_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void getint_deinit(UDF_INIT *initid);
 long long getint(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
+my_bool rotint_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
+void rotint_deinit(UDF_INIT *initid);
+long long rotint(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
 my_bool bround_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void bround_deinit(UDF_INIT *initid);
-long long bround(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
+double bround(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
 my_bool xround_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void xround_deinit(UDF_INIT *initid);
@@ -144,7 +147,7 @@ long long isbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
     long long bit = *((longlong *) args->args[0]);
     long long n = *((longlong *) args->args[1]);
 
-    return !!(bit & (1 << n));
+    return (bit >> n) & 1;
 }
 
 my_bool setbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
@@ -204,6 +207,35 @@ long long invbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
     long long n = *((longlong *) args->args[1]);
 
     return bit ^ (1 << n);
+}
+
+my_bool rotbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+{
+    if (2 != args->arg_count) {
+	strcpy(message, "rotbit must have exactly two arguments");
+	return 1;
+    }
+
+    initid->const_item = 1;
+    initid->maybe_null = 1;
+
+    return 0;
+}
+
+long long rotbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+	char *is_null,
+	char *error __attribute__((unused)))
+{
+    if (NULL == args->args[0] || NULL == args->args[1]) {
+	*is_null = 1;
+	return 0;
+    }
+
+    long long bit = *((longlong *) args->args[0]);
+    long long n = *((longlong *) args->args[1]);
+
+    n = (63 + (n % 63)) % 63;
+    return ((bit << n) | (bit >> (63 - n))) & 0x7FFFFFFFFFFFFFFFLL;
 }
 
 my_bool numbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
@@ -299,6 +331,49 @@ long long getint(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
     return (n >> x) & ((2 << (y - x)) - 1);
 }
 
+my_bool rotint_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+{
+    if (4 != args->arg_count) {
+	strcpy(message, "rotint must have exactly four arguments");
+	return 1;
+    }
+
+    initid->const_item = 1;
+    initid->maybe_null = 1;
+
+    return 0;
+}
+
+long long rotint(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+	char *is_null,
+	char *error __attribute__((unused)))
+{
+    long long n, x, y, m, a, b;
+
+    if (NULL == args->args[0] || NULL == args->args[1] || NULL == args->args[2] || NULL == args->args[3]) {
+	*is_null = 1;
+	return 0;
+    }
+
+    n = *((longlong *) args->args[0]);
+    x = *((longlong *) args->args[1]);
+    y = *((longlong *) args->args[2]);
+    m = *((longlong *) args->args[3]);
+
+    if (y < x || x < 1) {
+	*is_null = 1;
+	return 0;
+    }
+
+    y -= x;
+    m = (y + (m % y)) % y;
+
+    a = (1 << y) - 1;
+    b = (n >> x) & a;
+
+    return (n & (~(a << x))) | ((((b << m) | (b >> (y - m))) & a) << x);
+}
+
 my_bool setint_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
     if (4 != args->arg_count) {
@@ -335,28 +410,26 @@ my_bool bround_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 1;
     }
 
+    args->arg_type[0] = REAL_RESULT;
+    args->arg_type[1] = REAL_RESULT;
     initid->const_item = 1;
     initid->maybe_null = 1;
+    initid->decimals = 8;
+    initid->max_length = 20;
 
     return 0;
 }
 
-long long bround(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+double bround(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	char *is_null,
 	char *error __attribute__((unused)))
 {
-    if (NULL == args->args[0] || NULL == args->args[1]) {
+    if (NULL == args->args[0] || NULL == args->args[1] || 0 == *((double *) args->args[1])) {
 	*is_null = 1;
 	return 0;
     }
-    long long n = *((longlong *) args->args[0]);
-    long long b = *((longlong *) args->args[1]);
 
-    if (0 == b) {
-	return 0;
-    }
-
-    return n + b - n % b;
+    return ceil(*((double *) args->args[0]) / *((double *) args->args[1])) * *((double *) args->args[1]);
 }
 
 my_bool xround_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
@@ -366,6 +439,7 @@ my_bool xround_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 1;
     }
 
+    args->arg_type[0] = REAL_RESULT;
     initid->const_item = 1;
     initid->maybe_null = 0;
 
@@ -376,12 +450,14 @@ long long xround(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	char *is_null,
 	char *error __attribute__((unused)))
 {
-    long long n = *((longlong *) args->args[0]);
+    long long n;
 
     if (NULL == args->args[0]) {
 	*is_null = 1;
 	return 0;
     }
+
+    n = (long long) *((double *) args->args[0]);
 
     if (n > 1000000000LL) {
 
@@ -447,7 +523,6 @@ long long thumbscale(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	char *is_null,
 	char *error __attribute__((unused)))
 {
-
     if (NULL == args->args[0] || NULL == args->args[1] || NULL == args->args[2]) {
 	*is_null = 1;
 	return 0;
@@ -479,7 +554,6 @@ double thumbratio(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	char *is_null,
 	char *error __attribute__((unused)))
 {
-
     if (NULL == args->args[0] || NULL == args->args[1]) {
 	*is_null = 1;
 	return 0;
@@ -553,7 +627,6 @@ double bound(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	char *is_null,
 	char *error __attribute__((unused)))
 {
-
     if (NULL == args->args[0]) {
 	*is_null = 1;
 	return 0;
@@ -672,7 +745,7 @@ char *cut(UDF_INIT *initid, UDF_ARGS *args,
 
 my_bool slug_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
-    if (1 != args->arg_count && 3 != args->arg_count) {
+    if (1 != args->arg_count) {
 	strcpy(message, "slug must have exaclty one argument");
 	return 1;
     }
