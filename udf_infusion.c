@@ -154,14 +154,14 @@ long long isbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 
 my_bool setbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
-    if (args->arg_count == 2) {
-	args->arg_type[0] = INT_RESULT;
-	args->arg_type[1] = INT_RESULT;
-    } else if (args->arg_count == 3) {
-	args->arg_type[0] = INT_RESULT;
-	args->arg_type[1] = INT_RESULT;
+    switch (args->arg_count) {
+    case 3:
 	args->arg_type[2] = INT_RESULT;
-    } else {
+    case 2:
+	args->arg_type[0] = INT_RESULT;
+	args->arg_type[1] = INT_RESULT;
+	break;
+    default:
 	strcpy(message, "setbit must have two or three arguments");
 	return 1;
     }
