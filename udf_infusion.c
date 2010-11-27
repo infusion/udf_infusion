@@ -128,6 +128,8 @@ my_bool isbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 1;
     }
 
+    args->arg_type[0] = INT_RESULT;
+    args->arg_type[1] = INT_RESULT;
     initid->const_item = 1;
     initid->maybe_null = 1;
 
@@ -152,7 +154,14 @@ long long isbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 
 my_bool setbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
-    if (args->arg_count < 2 || args->arg_count > 3) {
+    if (args->arg_count == 2) {
+	args->arg_type[0] = INT_RESULT;
+	args->arg_type[1] = INT_RESULT;
+    } else if (args->arg_count == 3) {
+	args->arg_type[0] = INT_RESULT;
+	args->arg_type[1] = INT_RESULT;
+	args->arg_type[2] = INT_RESULT;
+    } else {
 	strcpy(message, "setbit must have two or three arguments");
 	return 1;
     }
@@ -188,6 +197,8 @@ my_bool invbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 1;
     }
 
+    args->arg_type[0] = INT_RESULT;
+    args->arg_type[1] = INT_RESULT;
     initid->const_item = 1;
     initid->maybe_null = 1;
 
@@ -216,6 +227,8 @@ my_bool rotbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 1;
     }
 
+    args->arg_type[0] = INT_RESULT;
+    args->arg_type[1] = INT_RESULT;
     initid->const_item = 1;
     initid->maybe_null = 1;
 
@@ -245,6 +258,7 @@ my_bool numbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 1;
     }
 
+    args->arg_type[0] = INT_RESULT;
     initid->const_item = 1;
     initid->maybe_null = 0;
 
@@ -279,6 +293,7 @@ my_bool msbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 1;
     }
 
+    args->arg_type[0] = INT_RESULT;
     initid->const_item = 1;
     initid->maybe_null = 1;
 
@@ -310,6 +325,9 @@ my_bool getint_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 1;
     }
 
+    args->arg_type[0] = INT_RESULT;
+    args->arg_type[1] = INT_RESULT;
+    args->arg_type[2] = INT_RESULT;
     initid->const_item = 1;
     initid->maybe_null = 1;
 
@@ -338,6 +356,10 @@ my_bool rotint_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 1;
     }
 
+    args->arg_type[0] = INT_RESULT;
+    args->arg_type[1] = INT_RESULT;
+    args->arg_type[2] = INT_RESULT;
+    args->arg_type[3] = INT_RESULT;
     initid->const_item = 1;
     initid->maybe_null = 1;
 
@@ -381,6 +403,10 @@ my_bool setint_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 1;
     }
 
+    args->arg_type[0] = INT_RESULT;
+    args->arg_type[1] = INT_RESULT;
+    args->arg_type[2] = INT_RESULT;
+    args->arg_type[3] = INT_RESULT;
     initid->const_item = 1;
     initid->maybe_null = 1;
 
@@ -439,7 +465,7 @@ my_bool xround_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 1;
     }
 
-    args->arg_type[0] = REAL_RESULT;
+    args->arg_type[0] = INT_RESULT;
     initid->const_item = 1;
     initid->maybe_null = 0;
 
@@ -457,7 +483,7 @@ long long xround(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	return 0;
     }
 
-    n = (long long) *((double *) args->args[0]);
+    n = *((longlong *) args->args[0]);
 
     if (n > 1000000000LL) {
 
@@ -511,6 +537,9 @@ my_bool thumbscale_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 1;
     }
 
+    args->arg_type[0] = INT_RESULT;
+    args->arg_type[1] = INT_RESULT;
+    args->arg_type[2] = INT_RESULT;
     initid->const_item = 1;
     initid->maybe_null = 1;
     initid->decimals = 8;
@@ -542,6 +571,8 @@ my_bool thumbratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 1;
     }
 
+    args->arg_type[0] = INT_RESULT;
+    args->arg_type[1] = INT_RESULT;
     initid->const_item = 1;
     initid->maybe_null = 1;
     initid->decimals = 8;
@@ -570,6 +601,11 @@ my_bool starratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
     if (args->arg_count < 2) {
 	strcpy(message, "bound must have at least two arguments");
 	return 1;
+    }
+
+    size_t i = args->arg_count;
+    while (i--) {
+	args->arg_type[i] = INT_RESULT;
     }
 
     initid->const_item = 1;
@@ -686,6 +722,7 @@ my_bool cut_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
     }
 
     args->arg_type[0] = STRING_RESULT;
+    args->arg_type[1] = INT_RESULT;
     args->arg_type[2] = STRING_RESULT;
 
     initid->max_length = args->attribute_lengths[0];
@@ -975,6 +1012,7 @@ char *slug(UDF_INIT *initid, UDF_ARGS *args,
 
     if ((*length = result - start_res) > 0 && *(result - 1) == '-') {
 	result--;
+	(*length)--;
     }
 
     *result = 0;
