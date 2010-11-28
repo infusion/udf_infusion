@@ -47,36 +47,36 @@ typedef long long longlong;
 
 my_bool isbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void isbit_deinit(UDF_INIT *initid);
-long long isbit(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
+longlong isbit(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
 my_bool setbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void setbit_deinit(UDF_INIT *initid);
-long long setbit(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
+longlong setbit(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
 my_bool invbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void invbit_deinit(UDF_INIT *initid);
-long long invbit(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
+longlong invbit(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
 my_bool numbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void numbit_deinit(UDF_INIT *initid);
-long long numbit(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
+longlong numbit(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
 my_bool msbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void msbit_deinit(UDF_INIT *initid);
-long long msbit(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
+longlong msbit(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
 
 my_bool setint_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void setint_deinit(UDF_INIT *initid);
-long long setint(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
+longlong setint(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
 my_bool getint_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void getint_deinit(UDF_INIT *initid);
-long long getint(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
+longlong getint(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
 my_bool rotint_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void rotint_deinit(UDF_INIT *initid);
-long long rotint(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
+longlong rotint(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
 my_bool bround_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void bround_deinit(UDF_INIT *initid);
@@ -84,12 +84,12 @@ double bround(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
 my_bool xround_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void xround_deinit(UDF_INIT *initid);
-long long xround(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
+longlong xround(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
 
 my_bool thumbscale_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void thumbscale_deinit(UDF_INIT *initid);
-long long thumbscale(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
+longlong thumbscale(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
 my_bool thumbratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void thumbratio_deinit(UDF_INIT *initid);
@@ -136,7 +136,7 @@ my_bool isbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
     return 0;
 }
 
-long long isbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+longlong isbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	char *is_null,
 	char *error __attribute__((unused)))
 {
@@ -146,8 +146,8 @@ long long isbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	return 0;
     }
 
-    long long bit = *((longlong *) args->args[0]);
-    long long n = *((longlong *) args->args[1]);
+    longlong bit = *((longlong *) args->args[0]);
+    longlong n = *((longlong *) args->args[1]);
 
     return (bit >> n) & 1;
 }
@@ -172,7 +172,7 @@ my_bool setbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
     return 0;
 }
 
-long long setbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+longlong setbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	char *is_null,
 	char *error __attribute__((unused)))
 {
@@ -181,8 +181,8 @@ long long setbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	return 0;
     }
 
-    long long bit = *((longlong *) args->args[0]);
-    long long n = *((longlong *) args->args[1]);
+    longlong bit = *((longlong *) args->args[0]);
+    longlong n = *((longlong *) args->args[1]);
 
     if (2 == args->arg_count || NULL != args->args[2] && 1 == *((longlong *) args->args[2])) {
 	return bit | (1 << n);
@@ -205,7 +205,7 @@ my_bool invbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
     return 0;
 }
 
-long long invbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+longlong invbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	char *is_null,
 	char *error __attribute__((unused)))
 {
@@ -214,8 +214,8 @@ long long invbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	return 0;
     }
 
-    long long bit = *((longlong *) args->args[0]);
-    long long n = *((longlong *) args->args[1]);
+    longlong bit = *((longlong *) args->args[0]);
+    longlong n = *((longlong *) args->args[1]);
 
     return bit ^ (1 << n);
 }
@@ -235,7 +235,7 @@ my_bool rotbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
     return 0;
 }
 
-long long rotbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+longlong rotbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	char *is_null,
 	char *error __attribute__((unused)))
 {
@@ -244,8 +244,8 @@ long long rotbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	return 0;
     }
 
-    long long bit = *((longlong *) args->args[0]);
-    long long n = *((longlong *) args->args[1]);
+    longlong bit = *((longlong *) args->args[0]);
+    longlong n = *((longlong *) args->args[1]);
 
     n = (63 + (n % 63)) % 63;
     return ((bit << n) | (bit >> (63 - n))) & 0x7FFFFFFFFFFFFFFFLL;
@@ -265,7 +265,7 @@ my_bool numbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
     return 0;
 }
 
-long long numbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+longlong numbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	char *is_null,
 	char *error __attribute__((unused)))
 {
@@ -275,7 +275,7 @@ long long numbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
     }
 
     short c;
-    long long bit = *((longlong *) args->args[0]);
+    longlong bit = *((longlong *) args->args[0]);
 
     if (NULL != args->args[1] && 0 == *((longlong *) args->args[1])) {
 	bit = ~bit;
@@ -300,7 +300,7 @@ my_bool msbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
     return 0;
 }
 
-long long msbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+longlong msbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	char *is_null,
 	char *error __attribute__((unused)))
 {
@@ -308,10 +308,9 @@ long long msbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	*is_null = 1;
 	return 0;
     }
-    unsigned long long v = *((longlong *) args->args[0]);
+    ulonglong v = *((longlong *) args->args[0]);
     unsigned r = 0;
 
-    /* O(n) but works with i64 without problems, maybe split into O(2log(n)) later*/
     while (v >>= 1) {
 	r++;
     }
@@ -334,7 +333,7 @@ my_bool getint_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
     return 0;
 }
 
-long long getint(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+longlong getint(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	char *is_null,
 	char *error __attribute__((unused)))
 {
@@ -342,9 +341,9 @@ long long getint(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	*is_null = 1;
 	return 0;
     }
-    long long n = *((longlong *) args->args[0]);
-    long long x = *((longlong *) args->args[1]);
-    long long y = *((longlong *) args->args[2]);
+    longlong n = *((longlong *) args->args[0]);
+    longlong x = *((longlong *) args->args[1]);
+    longlong y = *((longlong *) args->args[2]);
 
     return (n >> x) & ((2 << (y - x)) - 1);
 }
@@ -366,11 +365,11 @@ my_bool rotint_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
     return 0;
 }
 
-long long rotint(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+longlong rotint(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	char *is_null,
 	char *error __attribute__((unused)))
 {
-    long long n, x, y, m, a, b;
+    longlong n, x, y, m, a, b;
 
     if (NULL == args->args[0] || NULL == args->args[1] || NULL == args->args[2] || NULL == args->args[3]) {
 	*is_null = 1;
@@ -413,7 +412,7 @@ my_bool setint_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
     return 0;
 }
 
-long long setint(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+longlong setint(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	char *is_null,
 	char *error __attribute__((unused)))
 {
@@ -421,10 +420,10 @@ long long setint(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	*is_null = 1;
 	return 0;
     }
-    long long n = *((longlong *) args->args[0]);
-    long long x = *((longlong *) args->args[1]);
-    long long y = *((longlong *) args->args[2]);
-    long long m = *((longlong *) args->args[3]);
+    longlong n = *((longlong *) args->args[0]);
+    longlong x = *((longlong *) args->args[1]);
+    longlong y = *((longlong *) args->args[2]);
+    longlong m = *((longlong *) args->args[3]);
 
     return n & (~(((2 << (y - x)) - 1) << x)) | (m << x);
 }
@@ -440,7 +439,7 @@ my_bool bround_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
     args->arg_type[1] = REAL_RESULT;
     initid->const_item = 1;
     initid->maybe_null = 1;
-    initid->decimals = 8;
+    initid->decimals = 5;
     initid->max_length = 20;
 
     return 0;
@@ -472,11 +471,11 @@ my_bool xround_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
     return 0;
 }
 
-long long xround(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+longlong xround(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	char *is_null,
 	char *error __attribute__((unused)))
 {
-    long long n;
+    longlong n;
 
     if (NULL == args->args[0]) {
 	*is_null = 1;
@@ -527,7 +526,7 @@ long long xround(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	    }
 	}
     }
-    return 1;
+    return 1LL;
 }
 
 my_bool thumbscale_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
@@ -542,13 +541,13 @@ my_bool thumbscale_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
     args->arg_type[2] = INT_RESULT;
     initid->const_item = 1;
     initid->maybe_null = 1;
-    initid->decimals = 8;
+    initid->decimals = 5;
     initid->max_length = 20;
 
     return 0;
 }
 
-long long thumbscale(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+longlong thumbscale(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	char *is_null,
 	char *error __attribute__((unused)))
 {
@@ -557,9 +556,9 @@ long long thumbscale(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	return 0;
     }
 
-    long long up = *((longlong *) args->args[0]);
-    long long down = *((longlong *) args->args[1]);
-    long long scale = *((longlong *) args->args[2]);
+    longlong up = *((longlong *) args->args[0]);
+    longlong down = *((longlong *) args->args[1]);
+    longlong scale = *((longlong *) args->args[2]);
 
     return round(scale * up / (double) (down + up));
 }
@@ -575,7 +574,7 @@ my_bool thumbratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
     args->arg_type[1] = INT_RESULT;
     initid->const_item = 1;
     initid->maybe_null = 1;
-    initid->decimals = 8;
+    initid->decimals = 5;
     initid->max_length = 20;
 
     return 0;
@@ -590,8 +589,8 @@ double thumbratio(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	return 0;
     }
 
-    long long up = *((longlong *) args->args[0]);
-    long long down = *((longlong *) args->args[1]);
+    longlong up = *((longlong *) args->args[0]);
+    longlong down = *((longlong *) args->args[1]);
 
     return (double) (up + down) / (1 + abs(up - down));
 }
@@ -610,7 +609,7 @@ my_bool starratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 
     initid->const_item = 1;
     initid->maybe_null = 1;
-    initid->decimals = 8;
+    initid->decimals = 5;
     initid->max_length = 20;
 
     return 0;
@@ -653,7 +652,7 @@ my_bool bound_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 
     initid->const_item = 1;
     initid->maybe_null = 1;
-    initid->decimals = 8;
+    initid->decimals = 5;
     initid->max_length = 20;
 
     return 0;
@@ -687,7 +686,7 @@ my_bool sigfig_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 
     initid->const_item = 1;
     initid->maybe_null = 1;
-    initid->decimals = 8;
+    initid->decimals = 5;
     initid->max_length = 20;
 
     args->arg_type[0] = REAL_RESULT;
@@ -706,7 +705,7 @@ double sigfig(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
     }
 
     double value = *((double *) args->args[0]), pow_exp, pow_sig;
-    long long figs = *((longlong *) args->args[1]);
+    longlong figs = *((longlong *) args->args[1]);
 
     pow_exp = pow(10.0, (int) log10(value) + 1);
     pow_sig = pow(10.0, figs);
@@ -738,7 +737,7 @@ char *cut(UDF_INIT *initid, UDF_ARGS *args,
 {
 
     char *str = args->args[0], *c = "...";
-    long sl = args->lengths[0], cl = 3, max = *((long long *) args->args[1]), i;
+    long sl = args->lengths[0], cl = 3, max = *((longlong *) args->args[1]), i;
 
     if (NULL == str) {
 	*is_null = 1;
