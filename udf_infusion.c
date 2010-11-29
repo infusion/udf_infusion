@@ -464,7 +464,14 @@ my_bool xround_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 		return 1;
 	}
 
-	args->arg_type[0] = INT_RESULT;
+	switch (args->arg_type[0]) {
+	case STRING_RESULT:
+		args->arg_type[0] = INT_RESULT;
+		break;
+	case DECIMAL_RESULT:
+		args->arg_type[0] = REAL_RESULT;
+		break;
+	}
 	initid->const_item = 1;
 	initid->maybe_null = 0;
 
@@ -475,58 +482,79 @@ longlong xround(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 		char *is_null,
 		char *error __attribute__((unused)))
 {
-	longlong n;
+	longlong n, x = 1LL;
 
 	if (NULL == args->args[0]) {
 		*is_null = 1;
 		return 0;
 	}
 
-	n = *((longlong *) args->args[0]);
+	if (INT_RESULT == args->arg_type[0]) {
+
+		n = *((longlong *) args->args[0]);
+
+	} else {
+
+		n = (longlong) *((double *) args->args[0]);
+
+		if ((double) n != *((double *) args->args[0])) {
+
+			if (*((double *) args->args[0]) < 0) {
+				n--;
+			} else {
+				n++;
+			}
+		}
+	}
+
+	if (n < 0) {
+		n = -n;
+		x = -1;
+	}
 
 	if (n > 1000000000LL) {
 
 		if (n > 100000000000000LL) {
 			if (n > 10000000000000000LL) {
-				if (n <= 100000000000000000LL) return 100000000000000000LL;
-				if (n <= 1000000000000000000LL) return 1000000000000000000LL;
-				return 1000000000000000000LL;
+				if (n <= 100000000000000000LL) return x * 100000000000000000LL;
+				if (n <= 1000000000000000000LL) return x * 1000000000000000000LL;
+				return x * 1000000000000000000LL;
 			} else {
-				if (n <= 1000000000000000LL) return 1000000000000000LL;
-				return 10000000000000000LL;
+				if (n <= 1000000000000000LL) return x * 1000000000000000LL;
+				return x * 10000000000000000LL;
 			}
 		} else {
 			if (n > 100000000000LL) {
-				if (n <= 1000000000000LL) return 1000000000000LL;
-				if (n <= 10000000000000LL) return 10000000000000LL;
-				return 100000000000000LL;
+				if (n <= 1000000000000LL) return x * 1000000000000LL;
+				if (n <= 10000000000000LL) return x * 10000000000000LL;
+				return x * 100000000000000LL;
 			} else {
-				if (n <= 10000000000LL) return 10000000000LL;
-				return 100000000000LL;
+				if (n <= 10000000000LL) return x * 10000000000LL;
+				return x * 100000000000LL;
 			}
 		}
 	} else {
 		if (n > 10000LL) {
 			if (n > 1000000LL) {
-				if (n <= 10000000LL) return 10000000LL;
-				if (n <= 100000000LL) return 100000000LL;
-				return 1000000000LL;
+				if (n <= 10000000LL) return x * 10000000LL;
+				if (n <= 100000000LL) return x * 100000000LL;
+				return x * 1000000000LL;
 			} else {
-				if (n <= 100000LL) return 100000LL;
-				return 1000000LL;
+				if (n <= 100000LL) return x * 100000LL;
+				return x * 1000000LL;
 			}
 		} else {
 			if (n > 100LL) {
-				if (n <= 1000LL) return 1000LL;
-				return 10000LL;
+				if (n <= 1000LL) return x * 1000LL;
+				return x * 10000LL;
 			} else {
-				if (n <= 1LL) return 1LL;
-				if (n <= 10LL) return 10LL;
-				return 100LL;
+				if (n <= 1LL) return x;
+				if (n <= 10LL) return x * 10LL;
+				return x * 100LL;
 			}
 		}
 	}
-	return 1LL;
+	return x;
 }
 
 my_bool thumbscale_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
