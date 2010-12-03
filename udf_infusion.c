@@ -466,8 +466,6 @@ my_bool xround_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 
 	switch (args->arg_type[0]) {
 	case STRING_RESULT:
-		args->arg_type[0] = INT_RESULT;
-		break;
 	case DECIMAL_RESULT:
 		args->arg_type[0] = REAL_RESULT;
 		break;
@@ -483,6 +481,7 @@ longlong xround(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 		char *error __attribute__((unused)))
 {
 	longlong n, x = 1LL;
+	double d;
 
 	if (NULL == args->args[0]) {
 		*is_null = 1;
@@ -495,16 +494,10 @@ longlong xround(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 
 	} else {
 
-		n = (longlong) *((double *) args->args[0]);
+		d = *((double *) args->args[0]);
+		n = (longlong) d;
 
-		if ((double) n != *((double *) args->args[0])) {
-
-			if (*((double *) args->args[0]) < 0) {
-				n--;
-			} else {
-				n++;
-			}
-		}
+		n = n + (n < d) - (d < n);
 	}
 
 	if (n < 0) {
@@ -626,7 +619,7 @@ double thumbratio(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 my_bool starratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	if (args->arg_count < 2) {
-		strcpy(message, "bound must have at least two arguments");
+		strcpy(message, "starratio must have at least two arguments");
 		return 1;
 	}
 
@@ -669,14 +662,15 @@ double starratio(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 
 my_bool bound_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
-	if (3 != args->arg_count) {
-		strcpy(message, "bound must have exactly three arguments");
+	if (3 != args->arg_count && 4 != args->arg_count) {
+		strcpy(message, "bound must have three or four arguments");
 		return 1;
 	}
 
 	args->arg_type[0] = REAL_RESULT;
 	args->arg_type[1] = REAL_RESULT;
 	args->arg_type[2] = REAL_RESULT;
+	args->arg_type[3] = INT_RESULT;
 
 	initid->const_item = 1;
 	initid->maybe_null = 1;
@@ -690,19 +684,50 @@ double bound(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 		char *is_null,
 		char *error __attribute__((unused)))
 {
+	long long mode = 1;
+	double *n, *x, *y, *t;
+
 	if (NULL == args->args[0]) {
 		*is_null = 1;
 		return 0;
 	}
 
-	if (NULL != args->args[1] && *((double *) args->args[0]) < *((double *) args->args[1])) {
-		return *((double *) args->args[1]);
+	n = (double *) args->args[0];
+	x = (double *) args->args[1];
+	y = (double *) args->args[2];
+
+	if (4 == args->arg_count) {
+		mode = *((long long *) args->args[3]);
 	}
 
-	if (NULL != args->args[2] && *((double *) args->args[0]) > *((double *) args->args[2])) {
-		return *((double *) args->args[2]);
+	if (NULL != x && NULL != y && *y < *x) {
+
+		switch (mode) {
+		case 0:
+			t = y;
+			y = x;
+			x = t;
+			break;
+		case 1:
+			y = x;
+			break;
+		case 2:
+			x = y;
+			break;
+		default:
+			*is_null = 1;
+			return 0;
+		}
 	}
-	return *((double *) args->args[0]);
+
+	if (NULL != y && *y < *n) {
+		return *y;
+	}
+
+	if (NULL != x && *n < *x) {
+		return *x;
+	}
+	return *n;
 }
 
 my_bool sigfig_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
