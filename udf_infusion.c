@@ -121,6 +121,14 @@ char *slug(UDF_INIT *initid, UDF_ARGS *args,
 		char *result, unsigned long *length,
 		char *is_null, char *error);
 
+my_bool ngram_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
+void ngram_deinit(UDF_INIT *initid);
+char *ngram(UDF_INIT *initid, UDF_ARGS *args,
+		char *result, unsigned long *length,
+		char *is_null, char *error);
+
+static char *_translate_string(UDF_ARGS *args, char *result, unsigned long *length, char separator);
+
 my_bool isbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	if (2 != args->arg_count) {
@@ -852,14 +860,82 @@ char *slug(UDF_INIT *initid, UDF_ARGS *args,
 		char *result, unsigned long *length,
 		char *is_null, char *error __attribute__((unused)))
 {
-	char *start_res = result, *ptr = args->args[0], *end_str = ptr + args->lengths[0], add = 0;
+	if (NULL == args->args[0]) {
+		*is_null = 1;
+		return 0;
+	}
 
-	/* My own UTF8 and latin translation table */
+	return _translate_string(args, result, length, '-');
+}
+
+my_bool ngram_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+{
+	switch (args->arg_count) {
+	case 2:
+		args->arg_type[1] = INT_RESULT;
+	case 1:
+		args->arg_type[0] = STRING_RESULT;
+		break;
+	default:
+		strcpy(message, "ngram must have one or two arguments");
+		return 1;
+	}
+
+	initid->max_length = args->lengths[0] * 11;
+	initid->const_item = 1;
+	initid->maybe_null = 1;
+
+	return 0;
+}
+
+char *ngram(UDF_INIT *initid, UDF_ARGS *args,
+		char *result, unsigned long *length,
+		char *is_null, char *error __attribute__((unused)))
+{
+	char *tmp, *start_res = result;
+
+	long i = -1, j, l, n = 2;
 
 	if (NULL == args->args[0]) {
 		*is_null = 1;
 		return 0;
 	}
+
+	result = _translate_string(args, result, length, '_');
+	tmp = strndup(result, *length);
+	l = *length;
+
+	if (2 == args->arg_count) {
+		if ((n = (unsigned) *((long long *) args->args[1])) > 10) n = 2;
+	}
+
+	for (result = start_res; i < l; i++) {
+		if (i < l - n + 2) {
+			for (j = 0; j < n; j++) {
+				if (i + j >= 0 && i + j < l) {
+					*(result++) = tmp[i + j];
+				} else {
+					*(result++) = '_';
+				}
+			}
+			*(result++) = ' ';
+		}
+	}
+	free(tmp);
+
+	*(--result) = 0;
+
+	*length = result - start_res;
+
+	return start_res;
+}
+
+static char *_translate_string(UDF_ARGS *args, char *result, unsigned long *length, char separator)
+{
+
+	char *start_res = result, *ptr = args->args[0], *end_str = ptr + args->lengths[0], add = 0;
+
+	/* My own UTF8 and latin translation table */
 
 	for (; ptr < end_str; ptr++) {
 
@@ -1054,7 +1130,7 @@ char *slug(UDF_INIT *initid, UDF_ARGS *args,
 				break;
 			default:
 				if (add) {
-					*(result++) = '-';
+					*(result++) = separator;
 					add = 0;
 				}
 				ptr--;

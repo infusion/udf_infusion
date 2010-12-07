@@ -13,6 +13,7 @@ drop function if exists xround;
 drop function if exists bound;
 drop function if exists cut;
 drop function if exists slug;
+drop function if exists ngram;
 drop function if exists thumbscale;
 drop function if exists thumbratio;
 drop function if exists starratio;
