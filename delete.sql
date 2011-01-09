@@ -19,3 +19,5 @@ drop function if exists thumbratio;
 drop function if exists starratio;
 drop function if exists sigfig;
 
+drop function if exists group_first;
+drop function if exists group_last;

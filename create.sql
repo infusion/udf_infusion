@@ -17,4 +17,6 @@ CREATE FUNCTION ngram RETURNS string SONAME 'udf_infusion.so';
 CREATE FUNCTION thumbscale RETURNS integer SONAME 'udf_infusion.so';
 CREATE FUNCTION thumbratio RETURNS real SONAME 'udf_infusion.so';
 CREATE FUNCTION starratio RETURNS real SONAME 'udf_infusion.so';
-CREATE FUNCTION sigfig RETURNS real SONAME 'udf_infusion.so';
+
+CREATE AGGREGATE FUNCTION group_first RETURNS string SONAME 'udf_infusion.so';
+CREATE AGGREGATE FUNCTION group_last RETURNS string SONAME 'udf_infusion.so';

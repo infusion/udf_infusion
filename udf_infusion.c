@@ -41,9 +41,15 @@ typedef long long longlong;
 #include <mysql.h>
 #include <ctype.h>
 
-#ifdef HAVE_DLOPEN
+#ifndef _HAVE_DLOPEN
 
 /* These must be right or mysqld will not find the symbol! */
+
+struct Buffer {
+	long long length;
+	char *string;
+	char state;
+};
 
 my_bool isbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void isbit_deinit(UDF_INIT *initid);
@@ -104,10 +110,6 @@ my_bool bound_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void bound_deinit(UDF_INIT *initid);
 double bound(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
-my_bool sigfig_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void sigfig_deinit(UDF_INIT *initid);
-double sigfig(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
-
 
 my_bool cut_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void cut_deinit(UDF_INIT *initid);
@@ -126,6 +128,22 @@ void ngram_deinit(UDF_INIT *initid);
 char *ngram(UDF_INIT *initid, UDF_ARGS *args,
 		char *result, unsigned long *length,
 		char *is_null, char *error);
+
+my_bool group_first_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
+void group_first_clear(UDF_INIT* initid, char* is_null, char *error);
+void group_first_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error);
+void group_first_deinit(UDF_INIT *initid);
+char *group_first(UDF_INIT *initid, UDF_ARGS *args,
+		char *result, unsigned long *length,
+		char *is_null, char *error __attribute__((unused)));
+
+my_bool group_last_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
+void group_last_clear(UDF_INIT* initid, char* is_null, char *error);
+void group_last_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error);
+void group_last_deinit(UDF_INIT *initid);
+char *group_last(UDF_INIT *initid, UDF_ARGS *args,
+		char *result, unsigned long *length,
+		char *is_null, char *error __attribute__((unused)));
 
 static char *_translate_string(UDF_ARGS *args, char *result, unsigned long *length, char separator);
 
@@ -738,42 +756,6 @@ double bound(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	return *n;
 }
 
-my_bool sigfig_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
-{
-	if (2 != args->arg_count) {
-		strcpy(message, "sigfig must have exactly two arguments");
-		return 1;
-	}
-
-	initid->const_item = 1;
-	initid->maybe_null = 1;
-	initid->decimals = 5;
-	initid->max_length = 20;
-
-	args->arg_type[0] = REAL_RESULT;
-
-	return 0;
-}
-
-double sigfig(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
-		char *is_null,
-		char *error __attribute__((unused)))
-{
-
-	if (NULL == args->args[0] || NULL == args->args[1]) {
-		*is_null = 1;
-		return 0;
-	}
-
-	double value = *((double *) args->args[0]), pow_exp, pow_sig;
-	longlong figs = *((longlong *) args->args[1]);
-
-	pow_exp = pow(10.0, (int) log10(value) + 1);
-	pow_sig = pow(10.0, figs);
-
-	return ((int) ((value / pow_exp) * pow_sig + 0.5) / pow_sig * pow_exp);
-}
-
 my_bool cut_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	if (2 != args->arg_count && 3 != args->arg_count) {
@@ -1146,6 +1128,166 @@ static char *_translate_string(UDF_ARGS *args, char *result, unsigned long *leng
 	*result = 0;
 
 	return start_res;
+}
+
+my_bool group_first_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+{
+	struct Buffer* data;
+
+	if (1 != args->arg_count) {
+		strcpy(message, "group_first must have exaclty one argument");
+		return 1;
+	}
+
+	args->arg_type[0] = STRING_RESULT;
+
+	if (!(data = malloc(sizeof (*data)))) {
+		strcpy(message, "Memory allocation failed");
+		return 1;
+	}
+
+	if (!(data->string = malloc(65535))) {
+		strcpy(message, "Memory allocation failed");
+		free(data);
+		return 1;
+	}
+	data->length = 0;
+	data->state = 0;
+
+	initid->max_length = 65535;
+	initid->maybe_null = 1;
+	initid->ptr = (char*) data;
+
+	return 0;
+}
+
+void group_first_clear(UDF_INIT* initid, char* is_null, char *error)
+{
+	struct Buffer* data = (struct Buffer *) initid->ptr;
+
+	data->length = 0;
+	data->state = 0;
+}
+
+void group_first_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
+{
+	struct Buffer *data = (struct Buffer *) initid->ptr;
+
+	switch (data->state) {
+	case 0:
+
+		if (NULL == args->args[0]) {
+			data->state = 2;
+		} else {
+			memcpy(data->string, args->args[0], args->lengths[0]);
+			data->length = args->lengths[0];
+			data->state = 1;
+		}
+		break;
+	}
+}
+
+void group_first_deinit(UDF_INIT *initid)
+{
+	struct Buffer *data = (struct Buffer *) initid->ptr;
+
+	if (data) {
+
+		if (data->string) {
+			free(data->string);
+		}
+		free(data);
+	}
+}
+
+char *group_first(UDF_INIT *initid, UDF_ARGS *args,
+		char *result, unsigned long *length,
+		char *is_null, char *error __attribute__((unused)))
+{
+	struct Buffer* data = (struct Buffer *) initid->ptr;
+
+	if (data->state == 2 || data->string == NULL) {
+		*is_null = 1;
+		(*length) = 0;
+		return NULL;
+	}
+
+	initid->max_length = data->length;
+	result = data->string;
+
+	(*length) = data->length;
+
+	return result;
+}
+
+my_bool group_last_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+{
+	struct Buffer* data = NULL;
+
+	if (1 != args->arg_count) {
+		strcpy(message, "group_last must have exaclty one argument");
+		return 1;
+	}
+
+	args->arg_type[0] = STRING_RESULT;
+
+	if (!(data = malloc(sizeof (*data)))) {
+		strcpy(message, "Memory allocation failed");
+		return 1;
+	}
+	data->length = 0;
+	data->string = NULL;
+
+	initid->max_length = 65535;
+	initid->maybe_null = 1;
+	initid->ptr = (char*) data;
+
+	return 0;
+}
+
+void group_last_clear(UDF_INIT* initid, char* is_null, char *error)
+{
+	struct Buffer* data = (struct Buffer *) initid->ptr;
+
+	data->length = 0;
+	data->string = NULL;
+}
+
+void group_last_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
+{
+	struct Buffer *data = (struct Buffer *) initid->ptr;
+
+	data->string = args->args[0];
+	data->length = args->lengths[0];
+}
+
+void group_last_deinit(UDF_INIT *initid)
+{
+	struct Buffer *data = (struct Buffer *) initid->ptr;
+
+	if (NULL != data) {
+		free(initid->ptr);
+	}
+}
+
+char *group_last(UDF_INIT *initid, UDF_ARGS *args,
+		char *result, unsigned long *length,
+		char *is_null, char *error __attribute__((unused)))
+{
+	struct Buffer* data = (struct Buffer *) initid->ptr;
+
+	if (data->string == NULL) {
+		*is_null = 1;
+		(*length) = 0;
+		return NULL;
+	}
+
+	initid->max_length = data->length;
+	result = data->string;
+
+	(*length) = data->length;
+
+	return result;
 }
 
 #endif /* HAVE_DLOPEN */
