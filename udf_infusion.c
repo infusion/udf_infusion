@@ -41,7 +41,7 @@ typedef long long longlong;
 #include <mysql.h>
 #include <ctype.h>
 
-#ifndef _HAVE_DLOPEN
+#ifdef HAVE_DLOPEN
 
 /* These must be right or mysqld will not find the symbol! */
 
