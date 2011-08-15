@@ -273,8 +273,8 @@ longlong rotbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	longlong bit = *((longlong *) args->args[0]);
 	longlong n = *((longlong *) args->args[1]);
 
-	n = (63 + (n % 63)) % 63;
-	return ((bit << n) | (bit >> (63 - n))) & 0x7FFFFFFFFFFFFFFFLL;
+	n = (64 + (n % 64)) % 64;
+	return ((bit << n) | (bit >> (64 - n))) & 0x7FFFFFFFFFFFFFFFLL;
 }
 
 my_bool numbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
@@ -412,7 +412,7 @@ longlong rotint(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 		return 0;
 	}
 
-	y -= x;
+	y-= x;
 	m = (y + (m % y)) % y;
 
 	a = (1 << y) - 1;
@@ -552,25 +552,23 @@ longlong xround(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 				return x * 100000000000LL;
 			}
 		}
-	} else {
-		if (n > 10000LL) {
-			if (n > 1000000LL) {
-				if (n <= 10000000LL) return x * 10000000LL;
-				if (n <= 100000000LL) return x * 100000000LL;
-				return x * 1000000000LL;
-			} else {
-				if (n <= 100000LL) return x * 100000LL;
-				return x * 1000000LL;
-			}
+	} else if (n > 10000LL) {
+		if (n > 1000000LL) {
+			if (n <= 10000000LL) return x * 10000000LL;
+			if (n <= 100000000LL) return x * 100000000LL;
+			return x * 1000000000LL;
 		} else {
-			if (n > 100LL) {
-				if (n <= 1000LL) return x * 1000LL;
-				return x * 10000LL;
-			} else {
-				if (n <= 1LL) return x;
-				if (n <= 10LL) return x * 10LL;
-				return x * 100LL;
-			}
+			if (n <= 100000LL) return x * 100000LL;
+			return x * 1000000LL;
+		}
+	} else {
+		if (n > 100LL) {
+			if (n <= 1000LL) return x * 1000LL;
+			return x * 10000LL;
+		} else {
+			if (n <= 1LL) return x;
+			if (n <= 10LL) return x * 10LL;
+			return x * 100LL;
 		}
 	}
 	return x;
@@ -688,15 +686,14 @@ double starratio(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 
 my_bool bound_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
-	if (3 != args->arg_count && 4 != args->arg_count) {
-		strcpy(message, "bound must have three or four arguments");
+	if (3 != args->arg_count) {
+		strcpy(message, "bound must have exactly three arguments");
 		return 1;
 	}
 
 	args->arg_type[0] = REAL_RESULT;
 	args->arg_type[1] = REAL_RESULT;
 	args->arg_type[2] = REAL_RESULT;
-	args->arg_type[3] = INT_RESULT;
 
 	initid->const_item = 1;
 	initid->maybe_null = 1;
@@ -710,40 +707,19 @@ double bound(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 		char *is_null,
 		char *error __attribute__((unused)))
 {
-	long long mode = 1;
-	double *n, *x, *y, *t;
-
-	if (NULL == args->args[0]) {
-		*is_null = 1;
-		return 0;
-	}
+	double *n, *x, *y;
 
 	n = (double *) args->args[0];
 	x = (double *) args->args[1];
 	y = (double *) args->args[2];
 
-	if (4 == args->arg_count) {
-		mode = *((long long *) args->args[3]);
+	if (NULL == n) {
+		*is_null = 1;
+		return 0;
 	}
 
-	if (NULL != x && NULL != y && *y < *x) {
-
-		switch (mode) {
-		case 0:
-			t = y;
-			y = x;
-			x = t;
-			break;
-		case 1:
-			y = x;
-			break;
-		case 2:
-			x = y;
-			break;
-		default:
-			*is_null = 1;
-			return 0;
-		}
+	if (NULL != y && NULL != x && *y < *x) {
+		return x;
 	}
 
 	if (NULL != y && *y < *n) {
@@ -803,7 +779,7 @@ char *cut(UDF_INIT *initid, UDF_ARGS *args,
 				goto done;
 			}
 		}
-	done:
+done:
 		if (-1 == i) {
 			*length = sl < max ? sl : max;
 		} else {
@@ -914,7 +890,6 @@ char *ngram(UDF_INIT *initid, UDF_ARGS *args,
 
 static char *_translate_string(UDF_ARGS *args, char *result, unsigned long *length, char separator)
 {
-
 	char *start_res = result, *ptr = args->args[0], *end_str = ptr + args->lengths[0], add = 0;
 
 	/* My own UTF8 and latin translation table */
@@ -925,7 +900,7 @@ static char *_translate_string(UDF_ARGS *args, char *result, unsigned long *leng
 
 		switch (c) {
 		case 65 ... 90:
-			c |= 32;
+			c|= 32;
 		case 97 ... 122:
 		case 48 ... 57:
 			*(result++) = c;
