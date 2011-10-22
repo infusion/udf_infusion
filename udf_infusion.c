@@ -41,9 +41,7 @@ typedef long long longlong;
 #include <mysql.h>
 #include <ctype.h>
 
-#ifdef HAVE_DLOPEN
-
-/* These must be right or mysqld will not find the symbol! */
+#ifndef HAVE_DLOPENxxx
 
 struct Buffer {
 	long long length;
@@ -51,99 +49,13 @@ struct Buffer {
 	char state;
 };
 
-my_bool isbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void isbit_deinit(UDF_INIT *initid);
-longlong isbit(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
+struct DoubleBuffer {
+	unsigned long used;
+	unsigned long size;
+	double *number;
+	double sum;
+};
 
-my_bool setbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void setbit_deinit(UDF_INIT *initid);
-longlong setbit(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
-
-my_bool invbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void invbit_deinit(UDF_INIT *initid);
-longlong invbit(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
-
-my_bool numbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void numbit_deinit(UDF_INIT *initid);
-longlong numbit(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
-
-my_bool msbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void msbit_deinit(UDF_INIT *initid);
-longlong msbit(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
-
-
-my_bool setint_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void setint_deinit(UDF_INIT *initid);
-longlong setint(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
-
-my_bool getint_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void getint_deinit(UDF_INIT *initid);
-longlong getint(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
-
-my_bool rotint_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void rotint_deinit(UDF_INIT *initid);
-longlong rotint(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
-
-my_bool bround_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void bround_deinit(UDF_INIT *initid);
-double bround(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
-
-my_bool xround_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void xround_deinit(UDF_INIT *initid);
-longlong xround(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
-
-
-my_bool thumbscale_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void thumbscale_deinit(UDF_INIT *initid);
-longlong thumbscale(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
-
-my_bool thumbratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void thumbratio_deinit(UDF_INIT *initid);
-double thumbratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
-
-my_bool starratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void starratio_deinit(UDF_INIT *initid);
-double starratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
-
-
-my_bool bound_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void bound_deinit(UDF_INIT *initid);
-double bound(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
-
-
-my_bool cut_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void cut_deinit(UDF_INIT *initid);
-char *cut(UDF_INIT *initid, UDF_ARGS *args,
-		char *result, unsigned long *length,
-		char *is_null, char *error);
-
-my_bool slug_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void slug_deinit(UDF_INIT *initid);
-char *slug(UDF_INIT *initid, UDF_ARGS *args,
-		char *result, unsigned long *length,
-		char *is_null, char *error);
-
-my_bool ngram_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void ngram_deinit(UDF_INIT *initid);
-char *ngram(UDF_INIT *initid, UDF_ARGS *args,
-		char *result, unsigned long *length,
-		char *is_null, char *error);
-
-my_bool group_first_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void group_first_clear(UDF_INIT* initid, char* is_null, char *error);
-void group_first_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error);
-void group_first_deinit(UDF_INIT *initid);
-char *group_first(UDF_INIT *initid, UDF_ARGS *args,
-		char *result, unsigned long *length,
-		char *is_null, char *error __attribute__((unused)));
-
-my_bool group_last_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void group_last_clear(UDF_INIT* initid, char* is_null, char *error);
-void group_last_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error);
-void group_last_deinit(UDF_INIT *initid);
-char *group_last(UDF_INIT *initid, UDF_ARGS *args,
-		char *result, unsigned long *length,
-		char *is_null, char *error __attribute__((unused)));
 
 static char *_translate_string(UDF_ARGS *args, char *result, unsigned long *length, char separator);
 
@@ -719,7 +631,7 @@ double bound(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	}
 
 	if (NULL != y && NULL != x && *y < *x) {
-		return x;
+		return *x;
 	}
 
 	if (NULL != y && *y < *n) {
@@ -788,7 +700,7 @@ done:
 
 		memcpy(result, str, *length);
 		memcpy(result + *length, c, cl);
-		*length += cl;
+		*length+= cl;
 		return result;
 	}
 
@@ -859,13 +771,24 @@ char *ngram(UDF_INIT *initid, UDF_ARGS *args,
 		return 0;
 	}
 
-	result = _translate_string(args, result, length, '_');
-	tmp = strndup(result, *length);
-	l = *length;
-
 	if (2 == args->arg_count) {
 		if ((n = (unsigned) *((long long *) args->args[1])) > 10) n = 2;
 	}
+
+	if (n < 1 || args->lengths[0] < 1) {
+		*length = 0;
+		return result;
+	}
+
+	result = _translate_string(args, result, length, '_');
+
+	l = *length;
+
+	if (l < 1 || l < n) {
+		return result;
+	}
+
+	tmp = strndup(result, l);
 
 	for (result = start_res; i < l; i++) {
 		if (i < l - n + 2) {
@@ -888,6 +811,20 @@ char *ngram(UDF_INIT *initid, UDF_ARGS *args,
 	return start_res;
 }
 
+#if 1
+#  define EN(n)		(n)
+#else
+#  define EN(n)		(((n) >> 8) | (((n) << 8) & 0xffff))
+#endif
+
+#define ADD1(s)		*(result++) = s[0]; add = 1;
+#define ADD1I(s)	ADD1(s); ++ptr;
+
+#define ADD2(s)		*(result++) = s[0]; *(result++) = s[1]; add = 1;
+#define ADD2I(s)	ADD2(s); ++ptr;
+
+#define BTW(c, a, b)	(unsigned)(c) - (unsigned)(a) <= (unsigned)(b) - (unsigned)(a)
+
 static char *_translate_string(UDF_ARGS *args, char *result, unsigned long *length, char separator)
 {
 	char *start_res = result, *ptr = args->args[0], *end_str = ptr + args->lengths[0], add = 0;
@@ -897,205 +834,162 @@ static char *_translate_string(UDF_ARGS *args, char *result, unsigned long *leng
 	for (; ptr < end_str; ptr++) {
 
 		unsigned char c = *ptr;
+		unsigned short s = *((unsigned short *) ptr);
 
-		switch (c) {
-		case 65 ... 90:
-			c|= 32;
-		case 97 ... 122:
-		case 48 ... 57:
-			*(result++) = c;
-			add = 1;
+		if (BTW(c, 'a', 'z') || BTW(c, '0', '9')) {
+			*(result++) = c;		add = 1;
+		} else if (BTW(c, 'A', 'Z')) {
+			*(result++) = c | 32;	add = 1;
+		} else switch (s) {
+		case EN(0x9fc3):
+			ADD2I("ss");
 			break;
-		case 223:
-			*(result++) = 's';
-			*(result++) = 's';
-			add = 1;
+		case EN(0x84c3): case EN(0xa4c3):
+		case EN(0xa6c3): case EN(0x86c3):
+			ADD2I("ae");
 			break;
-		case 196: case 198:
-		case 228: case 230:
-			*(result++) = 'a';
-			*(result++) = 'e';
-			add = 1;
+		case EN(0x96c3): case EN(0xb6c3):
+			ADD2I("oe");
 			break;
-		case 214: case 246:
-			*(result++) = 'o';
-			*(result++) = 'e';
-			add = 1;
+		case EN(0x9cc3): case EN(0xbcc3):
+			ADD2I("ue");
 			break;
-		case 220: case 252:
-			*(result++) = 'u';
-			*(result++) = 'e';
-			add = 1;
+		case EN(0xa0c3): case EN(0xa1c3):
+		case EN(0xa2c3): case EN(0xa3c3):
+		case EN(0xa5c3): case EN(0x80c3):
+		case EN(0x81c3): case EN(0x82c3):
+		case EN(0x83c3): case EN(0x85c3):
+			ADD1I("a");
 			break;
-		case 192: case 193:
-		case 194: case 195:
-		case 197: case 224:
-		case 225: case 226:
-		case 227: case 229:
-			*(result++) = 'a';
-			add = 1;
+		case EN(0xa8c3): case EN(0xa9c3):
+		case EN(0xaac3): case EN(0xabc3):
+		case EN(0x88c3): case EN(0x89c3):
+		case EN(0x8ac3): case EN(0x8bc3):
+			ADD1I("e");
 			break;
-		case 200: case 201:
-		case 202: case 203:
-		case 232: case 233:
-		case 234: case 235:
-			*(result++) = 'e';
-			add = 1;
+		case EN(0xacc3): case EN(0xadc3):
+		case EN(0xaec3): case EN(0xafc3):
+		case EN(0x8cc3): case EN(0x8dc3):
+		case EN(0x8ec3): case EN(0x8fc3):
+			ADD1I("i");
 			break;
-		case 161: case 204:
-		case 205: case 206:
-		case 207: case 236:
-		case 237: case 238:
-		case 239:
-			*(result++) = 'i';
-			add = 1;
+		case EN(0xb0c3): case EN(0xb2c3):
+		case EN(0xb3c3): case EN(0xb4c3):
+		case EN(0xb5c3): case EN(0x92c3):
+		case EN(0x93c3): case EN(0x94c3):
+		case EN(0x95c3):
+			ADD1I("o");
 			break;
-		case 210: case 211:
-		case 212: case 213:
-		case 240: case 242:
-		case 243: case 244:
-		case 245:
-			*(result++) = 'o';
-			add = 1;
+		case EN(0xb9c3): case EN(0xbac3):
+		case EN(0xbbc3): case EN(0x99c3):
+		case EN(0x9ac3): case EN(0x9bc3):
+		case EN(0xb5c2):
+			ADD1I("u");
 			break;
-		case 181: case 217:
-		case 218: case 219:
-		case 249: case 250:
-		case 251:
-			*(result++) = 'u';
-			add = 1;
+		case EN(0x91c3): case EN(0xb1c3):
+			ADD1I("n");
 			break;
-		case 209: case 241:
-			*(result++) = 'n';
-			add = 1;
+		case EN(0x87c3): case EN(0xa7c2):
+		case EN(0xa2c2): case EN(0xa7c3):
+			ADD1I("c");
 			break;
-		case 162: case 169:
-		case 199: case 231:
-			*(result++) = 'c';
-			add = 1;
+		case EN(0x9ec3): case EN(0xbec3):
+			ADD1I("p");
 			break;
-		case 222: case 254:
-			*(result++) = 'p';
-			add = 1;
+		case EN(0xbfc3): case EN(0xa5c2):
+		case EN(0x9dc3): case EN(0xbdc3):
+			ADD1I("y");
 			break;
-		case 165: case 221:
-		case 253: case 255:
-			*(result++) = 'y';
-			add = 1;
+		case EN(0x97c3):
+			ADD1I("x");
 			break;
-		case 215:
-			*(result++) = 'x';
-			add = 1;
+		case EN(0xaec2):
+			ADD1I("r");
 			break;
-		case 174:
-			*(result++) = 'r';
-			add = 1;
-			break;
-		case 208:
-			*(result++) = 'd';
-			add = 1;
+		case EN(0x90c3):
+			ADD1I("d");
 			break;
 		default:
-			switch (*((unsigned short *) ptr++)) {
-			case 0x9fc3:
-				*(result++) = 's';
-				*(result++) = 's';
-				add = 1;
+			switch (c) {
+			case 223:
+				ADD2("ss");
 				break;
-			case 0x84c3: case 0xa4c3:
-			case 0xa6c3: case 0x86c3:
-				*(result++) = 'a';
-				*(result++) = 'e';
-				add = 1;
+			case 196: case 198:
+			case 228: case 230:
+				ADD2("ae");
 				break;
-			case 0x96c3: case 0xb6c3:
-				*(result++) = 'o';
-				*(result++) = 'e';
-				add = 1;
+			case 214: case 246:
+				ADD2("oe");
 				break;
-			case 0x9cc3: case 0xbcc3:
-				*(result++) = 'u';
-				*(result++) = 'e';
-				add = 1;
+			case 220: case 252:
+				ADD2("ue");
 				break;
-			case 0xa0c3: case 0xa1c3:
-			case 0xa2c3: case 0xa3c3:
-			case 0xa5c3: case 0x80c3:
-			case 0x81c3: case 0x82c3:
-			case 0x83c3: case 0x85c3:
-				*(result++) = 'a';
-				add = 1;
+			case 192: case 193:
+			case 194: case 195:
+			case 197: case 224:
+			case 225: case 226:
+			case 227: case 229:
+				ADD1("a");
 				break;
-			case 0xa8c3: case 0xa9c3:
-			case 0xaac3: case 0xabc3:
-			case 0x88c3: case 0x89c3:
-			case 0x8ac3: case 0x8bc3:
-				*(result++) = 'e';
-				add = 1;
+			case 200: case 201:
+			case 202: case 203:
+			case 232: case 233:
+			case 234: case 235:
+				ADD1("e");
 				break;
-			case 0xacc3: case 0xadc3:
-			case 0xaec3: case 0xafc3:
-			case 0x8cc3: case 0x8dc3:
-			case 0x8ec3: case 0x8fc3:
-				*(result++) = 'i';
-				add = 1;
+			case 161: case 204:
+			case 205: case 206:
+			case 207: case 236:
+			case 237: case 238:
+			case 239:
+				ADD1("i");
 				break;
-			case 0xb0c3: case 0xb2c3:
-			case 0xb3c3: case 0xb4c3:
-			case 0xb5c3: case 0x92c3:
-			case 0x93c3: case 0x94c3:
-			case 0x95c3:
-				*(result++) = 'o';
-				add = 1;
+			case 210: case 211:
+			case 212: case 213:
+			case 240: case 242:
+			case 243: case 244:
+			case 245:
+				ADD1("o");
 				break;
-			case 0xb9c3: case 0xbac3:
-			case 0xbbc3: case 0x99c3:
-			case 0x9ac3: case 0x9bc3:
-			case 0xb5c2:
-				*(result++) = 'u';
-				add = 1;
+			case 181: case 217:
+			case 218: case 219:
+			case 249: case 250:
+			case 251:
+				ADD1("u");
 				break;
-			case 0x91c3: case 0xb1c3:
-				*(result++) = 'n';
-				add = 1;
+			case 209: case 241:
+				ADD1("n");
 				break;
-			case 0x87c3: case 0xa7c2:
-			case 0xa2c2: case 0xa7c3:
-				*(result++) = 'c';
-				add = 1;
+			case 162: case 169:
+			case 199: case 231:
+				ADD1("c");
 				break;
-			case 0x9ec3: case 0xbec3:
-				*(result++) = 'p';
-				add = 1;
+			case 222: case 254:
+				ADD1("p");
 				break;
-			case 0xbfc3: case 0xa5c2:
-			case 0x9dc3: case 0xbdc3:
-				*(result++) = 'y';
-				add = 1;
+			case 165: case 221:
+			case 253: case 255:
+				ADD1("y");
 				break;
-			case 0x97c3:
-				*(result++) = 'x';
-				add = 1;
+			case 215:
+				ADD1("x");
 				break;
-			case 0xaec2:
-				*(result++) = 'r';
-				add = 1;
+			case 174:
+				ADD1("r");
 				break;
-			case 0x90c3:
-				*(result++) = 'd';
-				add = 1;
+			case 208:
+				ADD1("d");
 				break;
 			default:
 				if (add) {
 					*(result++) = separator;
 					add = 0;
 				}
-				ptr--;
 			}
 		}
 	}
 
-	if ((*length = result - start_res) > 0 && *(result - 1) == '-') {
+	if ((*length = result - start_res) > 0 && *(result - 1) == separator) {
 		result--;
 		(*length)--;
 	}
@@ -1104,6 +998,12 @@ static char *_translate_string(UDF_ARGS *args, char *result, unsigned long *leng
 
 	return start_res;
 }
+#undef EN
+#undef BTW
+#undef ADD1
+#undef ADD1I
+#undef ADD2
+#undef ADD2I
 
 my_bool group_first_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
