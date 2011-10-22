@@ -1,6 +1,8 @@
 
-
 all:
-	gcc -O2 -shared -I /usr/local/mysql/include/ -o udf_infusion.so udf_infusion.c
+	gcc -fPIC -O2 -pipe -shared -I /usr/local/mysql/include/ -o udf_infusion.so udf_infusion.c
 	mv udf_infusion.so /usr/local/mysql/lib/plugin
-	cat delete.sql create.sql | /usr/local/mysql/bin/mysql -uroot -p -D test
+	gawk -f db.awk -v drop=1 < udf_infusion.c | /usr/local/mysql/bin/mysql
+	/etc/init.d/mysql restart
+	gawk -f db.awk -v drop=0 < udf_infusion.c | /usr/local/mysql/bin/mysql
+
