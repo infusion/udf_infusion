@@ -196,37 +196,6 @@ longlong rotbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	return ((bit << n) | (bit >> (64 - n))) & 0x7FFFFFFFFFFFFFFFLL;
 }
 
-my_bool msbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
-{
-	if (1 != args->arg_count) {
-		strcpy(message, "msbit must have exactly one single argument");
-		return 1;
-	}
-
-	args->arg_type[0] = INT_RESULT;
-	initid->const_item = 1;
-	initid->maybe_null = 1;
-
-	return 0;
-}
-
-longlong msbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
-		char *is_null,
-		char *error __attribute__((unused)))
-{
-	if (NULL == args->args[0]) {
-		*is_null = 1;
-		return 0;
-	}
-	ulonglong v = *((longlong *) args->args[0]);
-	unsigned r = 0;
-
-	while (v >>= 1) {
-		r++;
-	}
-	return r;
-}
-
 my_bool getint_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	if (3 != args->arg_count) {
