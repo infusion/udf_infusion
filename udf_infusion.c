@@ -196,41 +196,6 @@ longlong rotbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	return ((bit << n) | (bit >> (64 - n))) & 0x7FFFFFFFFFFFFFFFLL;
 }
 
-my_bool numbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
-{
-	if (1 != args->arg_count && 2 != args->arg_count) {
-		strcpy(message, "numbit must have one or two one arguments");
-		return 1;
-	}
-
-	args->arg_type[0] = INT_RESULT;
-	initid->const_item = 1;
-	initid->maybe_null = 0;
-
-	return 0;
-}
-
-longlong numbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
-		char *is_null,
-		char *error __attribute__((unused)))
-{
-	if (NULL == args->args[0]) {
-		*is_null = 1;
-		return 0;
-	}
-
-	short c;
-	longlong bit = *((longlong *) args->args[0]);
-
-	if (NULL != args->args[1] && 0 == *((longlong *) args->args[1])) {
-		bit = ~bit;
-	}
-
-	for (c = 0; bit; bit &= bit - 1, c++);
-
-	return c;
-}
-
 my_bool msbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	if (1 != args->arg_count) {
