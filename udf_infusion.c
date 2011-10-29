@@ -64,6 +64,15 @@ struct StatBuffer {
 	double M4;
 };
 
+struct CovBuffer {
+	double x;
+	double y;
+	double xy;
+	double xx;
+	double yy;
+	unsigned count;
+};
+
 static char *_translate_string(UDF_ARGS *args, char *result, unsigned long *length, char separator);
 
 my_bool isbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
@@ -1057,6 +1066,7 @@ my_bool skewness_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 		return 1;
 	}
 
+	initid->decimals = 5;
 	initid->maybe_null = 1;
 	initid->ptr = (char*) data;
 
@@ -1135,6 +1145,7 @@ my_bool kurtosis_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 		return 1;
 	}
 
+	initid->decimals = 5;
 	initid->maybe_null = 1;
 	initid->ptr = (char*) data;
 
@@ -1197,6 +1208,83 @@ double kurtosis(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	}
 
 	return data->count * data->M4 / (data->M2 * data->M2) - 3;
+}
+
+my_bool correlation_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+{
+	struct CovBuffer *data;
+
+	if (2 != args->arg_count) {
+		strcpy(message, "correlation must have exaclty two arguments");
+		return 1;
+	}
+
+	args->arg_type[0] = REAL_RESULT;
+	args->arg_type[1] = REAL_RESULT;
+
+	if (!(data = malloc(sizeof (*data)))) {
+		strcpy(message, "Memory allocation failed");
+		return 1;
+	}
+
+	initid->decimals = 5;
+	initid->maybe_null = 1;
+	initid->ptr = (char*) data;
+
+	return 0;
+}
+
+void correlation_clear(UDF_INIT* initid, char* is_null, char *error)
+{
+	struct CovBuffer *data = (struct CovBuffer *) initid->ptr;
+
+	data->count = 0;
+	data->x = 0;
+	data->y = 0;
+	data->xy = 0;
+	data->xx = 0;
+	data->yy = 0;
+}
+
+void correlation_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
+{
+	struct CovBuffer *data = (struct CovBuffer *) initid->ptr;
+
+	double x = *((double *)args->args[0]);
+	double y = *((double *)args->args[1]);
+
+	data->x = data->x + x;
+	data->y = data->y + y;
+	data->xx = data->xx + x * x;
+	data->xy = data->xy + x * y;
+	data->yy = data->yy + y * y;
+
+	data->count++;
+}
+
+void correlation_deinit(UDF_INIT *initid)
+{
+	struct CovBuffer *data = (struct CovBuffer *) initid->ptr;
+
+	if (data) {
+		free(data);
+	}
+}
+
+double correlation(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+		char *is_null,
+		char *error __attribute__((unused)))
+{
+	struct CovBuffer *data = (struct CovBuffer *) initid->ptr;
+
+	if (data->count == 0) {
+		*is_null = 1;
+		return 0;
+	}
+
+	return (data->xy - data->x * data->y / data->count) /
+		sqrt((data->xx - data->x * data->x / data->count) * (data->yy - data->y * data->y / data->count));
+
 }
 
 #endif /* HAVE_DLOPEN */
