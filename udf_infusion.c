@@ -1275,4 +1275,305 @@ double covariance(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	return (data->c - data->x * data->y / data->count) / data->count;
 }
 
+
+inline static unsigned int doubleSlot(struct DoubleBuffer *buffer, double value, int m, int n)
+{
+	double *data = buffer->number;
+
+	unsigned int i;
+
+	if (0 == buffer->used) {
+		return 0;
+	}
+
+	// TODO: Use binary search
+
+	if (value >= data[buffer->used - 1]) {
+		return buffer->used;
+	}
+
+	if (value <= data[0]) {
+		return 0;
+	}
+
+	for (i = 0; i < buffer->used - 1; i++) {
+
+		if (data[i] <= value && value <= data[1 + i]) {
+			return i + 1;
+		}
+	}
+	return buffer->used;
+}
+
+inline static void doublePush(struct DoubleBuffer *buffer, unsigned int step, double value)
+{
+	double *data = buffer->number;
+
+	/* About zero length of memmove()
+	7.21.1.2
+	"Where an argument declared as size_t n specifies the length of the array
+	for a function, n can have the value zero on a call to that function.
+	Unless explicitly stated otherwise in the description of a particular
+	function in this subclause, pointer arguments on such a call shall still
+	have valid values, as described in 7.1.4."
+	 */
+	memmove(&data[1 + step], &data[step], sizeof(*data) * (buffer->used - step));
+
+	data[step] = value;
+}
+
+#define LESSSIZE()							\
+	if (data->size == data->used) {			\
+		data->size<<= 1;					\
+		data->number = (double *) realloc(data->number, data->size * sizeof(*(data->number))); \
+	}
+
+#define LESSINIT()							\
+											\
+	if (!(data = malloc(sizeof (*data)))) {	\
+		strcpy(message, "Memory allocation failed"); \
+		return 1;							\
+	}										\
+	data->used = 0;							\
+	data->sum = 0;							\
+	data->size = 32;						\
+	data->number = (double *) malloc(data->size * sizeof(*(data->number))); \
+											\
+	initid->maybe_null = 1;					\
+	initid->ptr = (char*) data
+
+#define LESSCLEAR()							\
+	struct DoubleBuffer *data = (struct DoubleBuffer *) initid->ptr; \
+											\
+	data->used = 0
+
+
+#define LESSADD()							\
+	struct DoubleBuffer *data = (struct DoubleBuffer *) initid->ptr; \
+	double value = *((double*)args->args[0]); \
+											\
+	unsigned int s = doubleSlot(data, value, 0, data->used - 1); \
+											\
+	if (NULL == args->args[0])				\
+		return;								\
+											\
+	LESSSIZE();								\
+											\
+	switch (type) {							\
+	case 1:									\
+		data->sum = data->sum + value;		\
+		break;								\
+	}										\
+											\
+	doublePush(data, s, value);				\
+	data->used++
+
+
+#define LESSDEINIT()						\
+	struct DoubleBuffer *data = (struct DoubleBuffer *) initid->ptr; \
+											\
+	if (NULL != data->number) {				\
+		free(data->number);					\
+	}										\
+											\
+	if (NULL != data) {						\
+		free(data);							\
+	}
+
+
+#define LESS()								\
+	do {									\
+		psum+= data->number[count];			\
+											\
+		if (psum < limit) {					\
+			count++;						\
+											\
+			if (count >= data->used)		\
+				break;						\
+											\
+			continue;						\
+		}									\
+		break;								\
+											\
+	} while (1)
+
+
+my_bool lesspart_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+{
+	struct DoubleBuffer* data = NULL;
+
+	if (2 != args->arg_count) {
+		strcpy(message, "lesspart must have exaclty two arguments");
+		return 1;
+	}
+
+	args->arg_type[0] = REAL_RESULT;
+	args->arg_type[1] = REAL_RESULT;
+
+	LESSINIT();
+
+	return 0;
+}
+
+void lesspart_clear(UDF_INIT* initid, char* is_null, char *error)
+{
+	LESSCLEAR();
+}
+
+void lesspart_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
+{
+	int type = 0;
+	LESSADD();
+}
+
+void lesspart_deinit(UDF_INIT *initid)
+{
+	LESSDEINIT();
+}
+
+longlong lesspart(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
+{
+	struct DoubleBuffer *data = (struct DoubleBuffer *) initid->ptr;
+	double limit = *((double*)args->args[1]);
+
+	double psum = 0;
+
+	ulonglong count = 0;
+
+	if (limit < 0) {
+		*error = 1;
+		return 0;
+	}
+
+	LESS();
+
+	return (longlong) count;
+}
+
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+
+my_bool lesspartpct_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+{
+	struct DoubleBuffer* data = NULL;
+
+	if (2 != args->arg_count) {
+		strcpy(message, "lesspartpct must have exaclty two arguments");
+		return 1;
+	}
+
+	args->arg_type[0] = REAL_RESULT;
+	args->arg_type[1] = REAL_RESULT;
+
+	LESSINIT();
+
+	return 0;
+}
+
+void lesspartpct_clear(UDF_INIT* initid, char* is_null, char *error)
+{
+	LESSCLEAR();
+}
+
+void lesspartpct_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
+{
+	int type = 1;
+	LESSADD();
+}
+
+void lesspartpct_deinit(UDF_INIT *initid)
+{
+	LESSDEINIT();
+}
+
+longlong lesspartpct(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
+{
+	struct DoubleBuffer *data = (struct DoubleBuffer *) initid->ptr;
+	double limit = *((double*)args->args[1]);
+
+	double psum = 0;
+
+	ulonglong count = 0;
+
+	if (!(limit >= 0 && limit <= 1)) {
+		*error = 1;
+		return 0;
+	}
+
+	limit = limit * data->sum;
+
+	LESS();
+
+	return (longlong) count;
+}
+
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+
+my_bool lessavg_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+{
+	struct DoubleBuffer* data = NULL;
+
+	if (1 != args->arg_count) {
+		strcpy(message, "lessavg must have exactly one argument");
+		return 1;
+	}
+
+	args->arg_type[0] = REAL_RESULT;
+
+	LESSINIT();
+
+	return 0;
+}
+
+void lessavg_clear(UDF_INIT* initid, char* is_null, char *error)
+{
+	LESSCLEAR();
+}
+
+void lessavg_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
+{
+	struct DoubleBuffer *data = (struct DoubleBuffer *) initid->ptr;
+	double value = *((double*)args->args[0]);
+
+	if (NULL == args->args[0])
+		return;
+
+	LESSSIZE();
+
+	data->sum = data->sum + value;
+	data->number[data->used] = value;
+	data->used++;
+}
+
+void lessavg_deinit(UDF_INIT *initid)
+{
+	LESSDEINIT();
+}
+
+longlong lessavg(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
+{
+	struct DoubleBuffer *data = (struct DoubleBuffer *) initid->ptr;
+
+	ulonglong count = 0;
+
+	double /* volatile */ *ptr;
+	double limit = data->sum / data->used;
+	double *beg  = data->number;
+
+	if (1 == data->used % 2) {
+		count = (data->number[--data->used] < limit);
+	}
+
+	ptr = &(data->number[data->used]);
+
+	while (beg < ptr) {
+		count+= (*--ptr < limit);
+		count+= (*--ptr < limit); // new line saves the volatile pointer
+	}
+	return (longlong) count;
+}
+
 #endif /* HAVE_DLOPEN */
