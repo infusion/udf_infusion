@@ -67,9 +67,7 @@ struct StatBuffer {
 struct CovBuffer {
 	double x;
 	double y;
-	double xy;
-	double xx;
-	double yy;
+	double c;
 	unsigned count;
 };
 
@@ -138,7 +136,7 @@ longlong setbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	longlong bit = *((longlong *) args->args[0]);
 	longlong n = *((longlong *) args->args[1]);
 
-	if (2 == args->arg_count || NULL != args->args[2] && 1 == *((longlong *) args->args[2])) {
+	if (2 == args->arg_count || (NULL != args->args[2] && 1 == *((longlong *) args->args[2]))) {
 		return bit | (1 << n);
 	}
 	return bit & (~(1 << n));
@@ -356,6 +354,7 @@ my_bool xround_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	case STRING_RESULT:
 	case DECIMAL_RESULT:
 		args->arg_type[0] = REAL_RESULT;
+	default:
 		break;
 	}
 	initid->const_item = 1;
@@ -1126,7 +1125,7 @@ double skewness(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 		return 0;
 	}
 
-	return pow(data->count, 1 / 2) * data->M3 / pow(data->M2, 3 / 2);
+	return pow(data->count, 0.5) * data->M3 / pow(data->M2, 1.5);
 }
 
 my_bool kurtosis_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
@@ -1210,12 +1209,12 @@ double kurtosis(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	return data->count * data->M4 / (data->M2 * data->M2) - 3;
 }
 
-my_bool correlation_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+my_bool covariance_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	struct CovBuffer *data;
 
 	if (2 != args->arg_count) {
-		strcpy(message, "correlation must have exaclty two arguments");
+		strcpy(message, "covariance must have exaclty two arguments");
 		return 1;
 	}
 
@@ -1234,35 +1233,31 @@ my_bool correlation_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 0;
 }
 
-void correlation_clear(UDF_INIT* initid, char* is_null, char *error)
+void covariance_clear(UDF_INIT* initid, char* is_null, char *error)
 {
 	struct CovBuffer *data = (struct CovBuffer *) initid->ptr;
 
 	data->count = 0;
 	data->x = 0;
 	data->y = 0;
-	data->xy = 0;
-	data->xx = 0;
-	data->yy = 0;
+	data->c = 0;
 }
 
-void correlation_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
+void covariance_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
 {
 	struct CovBuffer *data = (struct CovBuffer *) initid->ptr;
 
 	double x = *((double *)args->args[0]);
 	double y = *((double *)args->args[1]);
 
-	data->x = data->x + x;
-	data->y = data->y + y;
-	data->xx = data->xx + x * x;
-	data->xy = data->xy + x * y;
-	data->yy = data->yy + y * y;
-
 	data->count++;
+
+	data->x+= x;
+	data->y+= y;
+	data->c+= x * y;
 }
 
-void correlation_deinit(UDF_INIT *initid)
+void covariance_deinit(UDF_INIT *initid)
 {
 	struct CovBuffer *data = (struct CovBuffer *) initid->ptr;
 
@@ -1271,20 +1266,13 @@ void correlation_deinit(UDF_INIT *initid)
 	}
 }
 
-double correlation(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+double covariance(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 		char *is_null,
 		char *error __attribute__((unused)))
 {
 	struct CovBuffer *data = (struct CovBuffer *) initid->ptr;
 
-	if (data->count == 0) {
-		*is_null = 1;
-		return 0;
-	}
-
-	return (data->xy - data->x * data->y / data->count) /
-		sqrt((data->xx - data->x * data->x / data->count) * (data->yy - data->y * data->y / data->count));
-
+	return (data->c - data->x * data->y / data->count) / data->count;
 }
 
 #endif /* HAVE_DLOPEN */
