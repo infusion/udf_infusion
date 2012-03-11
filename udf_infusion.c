@@ -1045,7 +1045,7 @@ longlong noverk(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 	n = n - k;
 
 	for (i = 1; i <= k; i++) {
-		res = res * (n + i) / i;
+		res = res * (n + i) / i; // Simplified from res = res * (n - i + 1) / i
 	}
 
 	return res;
