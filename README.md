@@ -277,7 +277,7 @@ mysql> SELECT GETINT(4283942, 4, 8);
 |                     2 |
 +-----------------------+
 1 row in set (0.00 sec)
-
+```
 
 Set a smaller integer into a bigger integer.
 See: http://www.xarg.org/2009/12/store-small-numbers-in-big-numbers/
