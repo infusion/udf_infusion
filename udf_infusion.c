@@ -363,11 +363,12 @@ my_bool xround_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 0;
 }
 
+#define RET_NEG(s) return (((s) ^ -f) + f)
 longlong xround(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 		char *is_null,
 		char *error __attribute__((unused)))
 {
-	longlong n, x = 1LL;
+	longlong n, f = 0;
 	double d;
 
 	if (NULL == args->args[0]) {
@@ -389,51 +390,52 @@ longlong xround(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 
 	if (n < 0) {
 		n = -n;
-		x = -1;
+		f = 1;
 	}
 
 	if (n > 1000000000LL) {
 
 		if (n > 100000000000000LL) {
 			if (n > 10000000000000000LL) {
-				if (n <= 100000000000000000LL) return x * 100000000000000000LL;
-				if (n <= 1000000000000000000LL) return x * 1000000000000000000LL;
-				return x * 1000000000000000000LL;
+				if (n <= 100000000000000000LL) RET_NEG(100000000000000000LL);
+				if (n <= 1000000000000000000LL) RET_NEG(1000000000000000000LL);
+				RET_NEG(1000000000000000000LL);
 			} else {
-				if (n <= 1000000000000000LL) return x * 1000000000000000LL;
-				return x * 10000000000000000LL;
+				if (n <= 1000000000000000LL) RET_NEG(1000000000000000LL);
+				RET_NEG(10000000000000000LL);
 			}
 		} else {
 			if (n > 100000000000LL) {
-				if (n <= 1000000000000LL) return x * 1000000000000LL;
-				if (n <= 10000000000000LL) return x * 10000000000000LL;
-				return x * 100000000000000LL;
+				if (n <= 1000000000000LL) RET_NEG(1000000000000LL);
+				if (n <= 10000000000000LL) RET_NEG(10000000000000LL);
+				RET_NEG(100000000000000LL);
 			} else {
-				if (n <= 10000000000LL) return x * 10000000000LL;
-				return x * 100000000000LL;
+				if (n <= 10000000000LL) RET_NEG(10000000000LL);
+				RET_NEG(100000000000LL);
 			}
 		}
 	} else if (n > 10000LL) {
 		if (n > 1000000LL) {
-			if (n <= 10000000LL) return x * 10000000LL;
-			if (n <= 100000000LL) return x * 100000000LL;
-			return x * 1000000000LL;
+			if (n <= 10000000LL) RET_NEG(10000000LL);
+			if (n <= 100000000LL) RET_NEG(100000000LL);
+			RET_NEG(1000000000LL);
 		} else {
-			if (n <= 100000LL) return x * 100000LL;
-			return x * 1000000LL;
+			if (n <= 100000LL) RET_NEG(100000LL);
+			RET_NEG(1000000LL);
 		}
 	} else {
 		if (n > 100LL) {
-			if (n <= 1000LL) return x * 1000LL;
-			return x * 10000LL;
+			if (n <= 1000LL) RET_NEG(1000LL);
+			RET_NEG(10000LL);
 		} else {
-			if (n <= 1LL) return x;
-			if (n <= 10LL) return x * 10LL;
-			return x * 100LL;
+			if (n <= 1LL) RET_NEG(1LL);
+			if (n <= 10LL) RET_NEG(10LL);
+			RET_NEG(100LL);
 		}
 	}
-	return x;
+	RET_NEG(1LL);
 }
+#undef RET_NEG
 
 my_bool bound_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
