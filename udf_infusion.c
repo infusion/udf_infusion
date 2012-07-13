@@ -39,7 +39,14 @@ typedef long long longlong;
 #endif
 #endif
 #include <mysql.h>
+#include <mysql/plugin.h>
+#include <mysql_version.h>
 #include <ctype.h>
+
+
+#ifndef NOT_FIXED_DEC
+#define NOT_FIXED_DEC 31
+#endif
 
 #ifndef HAVE_DLOPENxxx
 
@@ -859,12 +866,12 @@ my_bool group_first_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 
 	args->arg_type[0] = STRING_RESULT;
 
-	if (!(data = malloc(sizeof (*data)))) {
+	if (NULL == (data = malloc(sizeof (*data)))) {
 		strcpy(message, "Memory allocation failed");
 		return 1;
 	}
 
-	if (!(data->string = malloc(65535))) {
+	if (NULL == (data->string = malloc(65535))) {
 		strcpy(message, "Memory allocation failed");
 		free(data);
 		return 1;
@@ -949,7 +956,7 @@ my_bool group_last_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 
 	args->arg_type[0] = STRING_RESULT;
 
-	if (!(data = malloc(sizeof (*data)))) {
+	if (NULL == (data = malloc(sizeof (*data)))) {
 		strcpy(message, "Memory allocation failed");
 		return 1;
 	}
@@ -1064,7 +1071,7 @@ my_bool skewness_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 
 	args->arg_type[0] = REAL_RESULT;
 
-	if (!(data = malloc(sizeof (*data)))) {
+	if (NULL == (data = malloc(sizeof (*data)))) {
 		strcpy(message, "Memory allocation failed");
 		return 1;
 	}
@@ -1143,7 +1150,7 @@ my_bool kurtosis_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 
 	args->arg_type[0] = REAL_RESULT;
 
-	if (!(data = malloc(sizeof (*data)))) {
+	if (NULL == (data = malloc(sizeof (*data)))) {
 		strcpy(message, "Memory allocation failed");
 		return 1;
 	}
@@ -1225,7 +1232,7 @@ my_bool covariance_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	args->arg_type[0] = REAL_RESULT;
 	args->arg_type[1] = REAL_RESULT;
 
-	if (!(data = malloc(sizeof (*data)))) {
+	if (NULL == (data = malloc(sizeof (*data)))) {
 		strcpy(message, "Memory allocation failed");
 		return 1;
 	}
@@ -1333,7 +1340,7 @@ inline static void doublePush(struct DoubleBuffer *buffer, unsigned int step, do
 
 #define LESSINIT()							\
 											\
-	if (!(data = malloc(sizeof (*data)))) {	\
+	if (NULL == (data = malloc(sizeof (*data)))) {	\
 		strcpy(message, "Memory allocation failed"); \
 		return 1;							\
 	}										\
@@ -1680,5 +1687,31 @@ double median(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
 
 	return __median(data->number, data->used);
 }
+
+static int infusion_plugin_init(void *p) {
+
+	fprintf(stderr, "Infusion: "
+			"plugin loaded.\n");
+
+	return 0;
+}
+
+struct st_mysql_daemon infusion_info = { MYSQL_DAEMON_INTERFACE_VERSION };
+
+mysql_declare_plugin(infusion) {
+	MYSQL_DAEMON_PLUGIN,
+	&infusion_info,
+	"UDF Infusion",
+	"Robert Eisele (robert@xarg.org)",
+	"A functionality extension",
+	PLUGIN_LICENSE_GPL,
+	infusion_plugin_init,
+	NULL,
+	0x0100,
+	NULL,
+	NULL,
+	NULL
+}
+mysql_declare_plugin_end;
 
 #endif /* HAVE_DLOPEN */
