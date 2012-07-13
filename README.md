@@ -60,8 +60,6 @@ mysql> SELECT group_last(s) from t1;
 ```
 
 
-
-
 Get the maximum number of elements less than a certain partial sum
 ```
 int lesspart(double m);
@@ -99,6 +97,19 @@ See: http://geography.uoregon.edu/geogr/topics/moments.htm
 double kurtosis(double m);
 
 mysql> SELECT kurtosis(double m) from t1;
+```
+
+
+Misc Functions
+
+Implementation of the famous ROW_NUMBER (http://msdn.microsoft.com/en-us/library/ms186734.aspx) function, which was previously only possible in MySQL with an ugly variable handling.
+
+```
+mysql> SELECT row_number() FROM t1;
+
+### Determine how many rows are equal to an auto_increment column
+
+mysql> SELECT count(id = row_number() or null) FROM t1;
 ```
 
 
