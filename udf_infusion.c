@@ -325,7 +325,7 @@ my_bool bround_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	args->arg_type[1] = REAL_RESULT;
 	initid->const_item = 1;
 	initid->maybe_null = 1;
-	initid->decimals = 5;
+	initid->decimals = NOT_FIXED_DEC;
 	initid->max_length = 20;
 
 	return 0;
@@ -450,7 +450,7 @@ my_bool bound_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 
 	initid->const_item = 1;
 	initid->maybe_null = 1;
-	initid->decimals = 5;
+	initid->decimals = NOT_FIXED_DEC;
 	initid->max_length = 20;
 
 	return 0;
@@ -1019,7 +1019,7 @@ my_bool noverk_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	args->arg_type[1] = INT_RESULT;
 	initid->const_item = 1;
 	initid->maybe_null = 1;
-	initid->decimals = 5;
+	initid->decimals = NOT_FIXED_DEC;
 	initid->max_length = 20;
 
 	return 0;
@@ -1069,7 +1069,7 @@ my_bool skewness_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 		return 1;
 	}
 
-	initid->decimals = 5;
+	initid->decimals = NOT_FIXED_DEC;
 	initid->maybe_null = 1;
 	initid->ptr = (char*) data;
 
@@ -1148,7 +1148,7 @@ my_bool kurtosis_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 		return 1;
 	}
 
-	initid->decimals = 5;
+	initid->decimals = NOT_FIXED_DEC;
 	initid->maybe_null = 1;
 	initid->ptr = (char*) data;
 
@@ -1230,7 +1230,7 @@ my_bool covariance_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 		return 1;
 	}
 
-	initid->decimals = 5;
+	initid->decimals = NOT_FIXED_DEC;
 	initid->maybe_null = 1;
 	initid->ptr = (char*) data;
 
