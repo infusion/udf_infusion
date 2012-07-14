@@ -104,25 +104,31 @@ Misc Functions
 --------------
 
 Implementation of the famous ROW_NUMBER (http://msdn.microsoft.com/en-us/library/ms186734.aspx) function, which was previously only possible in MySQL with an ugly variable handling.
-
 ```
+int row_number();
+
 mysql> SELECT row_number() FROM t1;
 
 ### Determine how many rows are equal to an auto_increment column
-
 mysql> SELECT count(id = row_number() or null) FROM t1;
 ```
 
 
 A running SUM() for int and double/real values. Same as @x:= @x + value, but much faster and cleaner to code. The names are built up of R(unning)-SUM-(Int|Double)
-
 ```
+int rsumi(int col);
+double rsumd(double col);
+
+
 mysql> SELECT rsumi(int_col) FROM t1;
 mysql> SELECT rsumd(double_col) FROM t1;
 ```
 
+
 A 64 bit hash function for MySQL, implementing a FNV algorithm
 ```
+int fnv(string str);
+
 mysql> SELECT cast( fnv( str ) as unsigned ) from t1
 ```
 
