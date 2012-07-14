@@ -124,7 +124,7 @@ mysql> SELECT rsumd(double_col) FROM t1;
 A 64 bit hash function for MySQL, implementing a FNV algorithm
 ```
 mysql> SELECT cast( fnv( str ) as unsigned ) from t1
-
+```
 
 
 String Functions
