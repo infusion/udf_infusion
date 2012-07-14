@@ -113,6 +113,13 @@ mysql> SELECT count(id = row_number() or null) FROM t1;
 ```
 
 
+A running SUM() for int and double/real values. Same as @x:= @x + value, but much faster and cleaner to code. The names are built up of R(unning)-SUM-(Int|Double)
+
+```
+mysql> SELECT rsumi(int_col) FROM t1;
+mysql> SELECT rsumd(double_col) FROM t1;
+```
+
 String Functions
 ----------------
 

@@ -51,7 +51,7 @@ typedef long long longlong;
 #ifndef HAVE_DLOPENxxx
 
 struct Buffer {
-	long long length;
+	longlong length;
 	char *string;
 	char state;
 };
@@ -620,7 +620,7 @@ char *ngram(UDF_INIT *initid, UDF_ARGS *args,
 	}
 
 	if (2 == args->arg_count) {
-		if ((n = (unsigned) *((long long *) args->args[1])) > 10) n = 2;
+		if ((n = (unsigned) *((longlong *) args->args[1])) > 10) n = 2;
 	}
 
 	if (n < 1 || args->lengths[0] < 1) {
@@ -857,7 +857,6 @@ static char *_translate_string(UDF_ARGS *args, char *result, unsigned long *leng
 
 my_bool row_number_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
-
 	longlong *data;
 
 	if (0 != args->arg_count) {
@@ -892,6 +891,106 @@ longlong row_number(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error
 }
 
 void row_number_deinit(UDF_INIT *initid)
+{
+	if (initid->ptr) {
+		free(initid->ptr);
+	}
+}
+
+my_bool rsumi_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+{
+	longlong *data;
+
+	if (1 != args->arg_count) {
+		strcpy(message, "rsumi must have one argument");
+		return 1;
+	}
+
+	if (NULL == (data = malloc(sizeof (*data)))) {
+		strcpy(message, "Couldn't allocate memory");
+		return 1;
+	}
+	*data = 0;
+
+	args->arg_type[0] = INT_RESULT;
+	
+	initid->ptr = (char *) data;
+	initid->const_item = 0;
+	initid->maybe_null = 1;
+
+	return 0;
+}
+
+longlong rsumi(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
+{
+	longlong *data;
+
+	if (initid->ptr) {
+		data = (longlong *) initid->ptr;
+
+		if (NULL == args->args[0]) {
+			return *data;
+		}
+
+		(*data)+= *((longlong *) args->args[0]);
+
+		return *data;
+	}
+	*error = 1;
+	return 0;
+}
+
+void rsumi_deinit(UDF_INIT *initid)
+{
+	if (initid->ptr) {
+		free(initid->ptr);
+	}
+}
+
+my_bool rsumd_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+{
+	double *data;
+
+	if (1 != args->arg_count) {
+		strcpy(message, "rsumd must have one argument");
+		return 1;
+	}
+
+	if (NULL == (data = malloc(sizeof (*data)))) {
+		strcpy(message, "Couldn't allocate memory");
+		return 1;
+	}
+	*data = 0;
+
+	args->arg_type[0] = REAL_RESULT;
+	
+	initid->ptr = (char *) data;
+	initid->const_item = 0;
+	initid->maybe_null = 1;
+
+	return 0;
+}
+
+double rsumd(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
+{
+	double *data;
+
+	if (initid->ptr) {
+		data = (double *) initid->ptr;
+
+		if (NULL == args->args[0]) {
+			return *data;
+		}
+
+		(*data)+= *((double *) args->args[0]);
+
+		return *data;
+	}
+	*error = 1;
+	return 0;
+}
+
+void rsumd_deinit(UDF_INIT *initid)
 {
 	if (initid->ptr) {
 		free(initid->ptr);
@@ -1746,7 +1845,7 @@ mysql_declare_plugin(infusion) {
 	&infusion_info,
 	"UDF Infusion",
 	"Robert Eisele (robert@xarg.org)",
-	"A functionality extension",
+	"MySQL Functionality Extension",
 	PLUGIN_LICENSE_GPL,
 	infusion_plugin_init,
 	NULL,
