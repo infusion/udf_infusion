@@ -101,6 +101,7 @@ mysql> SELECT kurtosis(double m) from t1;
 
 
 Misc Functions
+--------------
 
 Implementation of the famous ROW_NUMBER (http://msdn.microsoft.com/en-us/library/ms186734.aspx) function, which was previously only possible in MySQL with an ugly variable handling.
 
