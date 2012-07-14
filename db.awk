@@ -24,9 +24,4 @@ END {
          printf("CREATE FUNCTION %s RETURNS %s SONAME 'udf_infusion.so';\n", x, used[x]);
       }
    }
-   if (drop) {
-      printf("UNINSTALL PLUGIN infusion;\n");
-   } else {
-      printf("INSTALL PLUGIN infusion SONAME 'udf_infusion.so';\n", x);
-   }
 }

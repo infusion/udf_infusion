@@ -39,8 +39,6 @@ typedef long long longlong;
 #endif
 #endif
 #include <mysql.h>
-#include <mysql/plugin.h>
-#include <mysql_version.h>
 #include <ctype.h>
 
 
@@ -1829,31 +1827,5 @@ double median(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
 
 	return __median(data->number, data->used);
 }
-
-static int infusion_plugin_init(void *p) {
-
-	fprintf(stderr, "Infusion: "
-			"plugin loaded.\n");
-
-	return 0;
-}
-
-struct st_mysql_daemon infusion_info = { MYSQL_DAEMON_INTERFACE_VERSION };
-
-mysql_declare_plugin(infusion) {
-	MYSQL_DAEMON_PLUGIN,
-	&infusion_info,
-	"UDF Infusion",
-	"Robert Eisele (robert@xarg.org)",
-	"MySQL Functionality Extension",
-	PLUGIN_LICENSE_GPL,
-	infusion_plugin_init,
-	NULL,
-	0x0100,
-	NULL,
-	NULL,
-	NULL
-}
-mysql_declare_plugin_end;
 
 #endif /* HAVE_DLOPEN */
