@@ -62,17 +62,17 @@ mysql> SELECT group_last(s) from t1;
 
 Get the maximum number of elements less than a certain partial sum
 ```
-int lesspart(double m);
+int lesspart(double m, double psum);
 
-mysql> SELECT lesspart(double m) from t1;
+mysql> SELECT lesspart(m, 1000) from t1;
 ```
 
 
 Get the maximum number of elements less than a certain percentage of the partial sum
 ```
-int lesspartpct(double m);
+int lesspartpct(double m, double pct);
 
-mysql> SELECT lesspartpct(double m) from t1;
+mysql> SELECT lesspartpct(m, 0.4) from t1;
 ```
 
 
