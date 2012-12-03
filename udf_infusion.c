@@ -1276,6 +1276,9 @@ void skewness_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
 {
 	struct StatBuffer *data = (struct StatBuffer *) initid->ptr;
 
+	if (NULL == args->args[0])
+		return;
+
 	// http://people.xiph.org/~tterribe/notes/homs.html
 
 	double value = *((double *) args->args[0]);
@@ -1355,6 +1358,9 @@ void kurtosis_clear(UDF_INIT* initid, char* is_null, char *error)
 void kurtosis_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
 {
 	struct StatBuffer *data = (struct StatBuffer *) initid->ptr;
+
+	if (NULL == args->args[0])
+		return;
 
 	// http://people.xiph.org/~tterribe/notes/homs.html
 
@@ -1437,6 +1443,9 @@ void covariance_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error
 {
 	struct CovBuffer *data = (struct CovBuffer *) initid->ptr;
 
+	if (NULL == args->args[0] || NULL == args->args[1])
+		return;
+
 	double x = *((double *) args->args[0]);
 	double y = *((double *) args->args[1]);
 
@@ -1462,6 +1471,10 @@ double covariance(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
 {
 	struct CovBuffer *data = (struct CovBuffer *) initid->ptr;
 
+	if (data->count == 0) {
+		*is_null = 1;
+		return 0;
+	}
 	return (data->c - data->x * data->y / data->count) / data->count;
 }
 
@@ -1864,6 +1877,10 @@ double median(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
 {
 	struct DoubleBuffer *data = (struct DoubleBuffer *) initid->ptr;
 
+	if (data->used==0) {
+		*is_null = 1;
+		return 0;
+	}
 	return __median(data->number, data->used);
 }
 
