@@ -1857,10 +1857,11 @@ void median_clear(UDF_INIT* initid, char* is_null, char *error)
 void median_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
 {
 	struct DoubleBuffer *data = (struct DoubleBuffer *) initid->ptr;
-	double value = *((double*) args->args[0]);
 
 	if (NULL == args->args[0])
 		return;
+
+	double value = *((double*) args->args[0]);
 
 	LESSSIZE();
 
