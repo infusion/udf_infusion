@@ -623,6 +623,8 @@ char *slug(UDF_INIT *initid, UDF_ARGS *args,
 	return _translate_string(args, result, length, '-');
 }
 
+#define MAX_GRAM 10
+
 my_bool ngram_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	switch (args->arg_count) {
@@ -636,7 +638,8 @@ my_bool ngram_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 		return 1;
 	}
 
-	initid->max_length = args->lengths[0] * 11;
+	initid->max_length = (args->lengths[0] + 1) * MAX_GRAM;
+	initid->ptr = NULL;
 	initid->const_item = 1;
 	initid->maybe_null = 1;
 
@@ -647,53 +650,76 @@ char *ngram(UDF_INIT *initid, UDF_ARGS *args,
 		char *result, unsigned long *length,
 		char *is_null, char *error __attribute__((unused)))
 {
-	char *tmp, *start_res = result;
+	char *tmp, *ptr, *start;
 
 	long i = -1, j, l, n = 2;
 
 	if (NULL == args->args[0]) {
 		*is_null = 1;
-		return 0;
+		return result;
 	}
 
 	if (2 == args->arg_count) {
-		if ((n = (unsigned) *((longlong *) args->args[1])) > 10) n = 2;
+		if ((n = (unsigned) *((longlong *) args->args[1])) > MAX_GRAM)
+			n = MAX_GRAM;
 	}
 
-	if (n < 1 || args->lengths[0] < 1) {
+	if (args->lengths[0] < 1 || n < 1) {
 		*length = 0;
 		return result;
 	}
 
-	result = _translate_string(args, result, length, '_');
+	if (initid->max_length * n <= 255 * MAX_GRAM) {
+		ptr = result;
+	} else if(NULL != initid->ptr) {
+		ptr = initid->ptr;
+	} else if (NULL == (ptr = lmalloc(initid->max_length))) {
+		*is_null = 1;
+		return result;
+	} else {
+		initid->ptr = ptr;
+	}
+
+	start = ptr;
+
+	_translate_string(args, ptr, length, '_');
 
 	l = *length;
 
 	if (l < 1 || l < n) {
-		return result;
+		return ptr;
 	}
 
-	tmp = strndup(result, l);
+	tmp = strndup(ptr, l);
 
-	for (result = start_res; i < l; i++) {
+	for (; i < l; i++) {
 		if (i < l - n + 2) {
 			for (j = 0; j < n; j++) {
 				if (i + j >= 0 && i + j < l) {
-					*(result++) = tmp[i + j];
+					*(ptr++) = tmp[i + j];
 				} else {
-					*(result++) = '_';
+					*(ptr++) = '_';
 				}
 			}
-			*(result++) = ' ';
+			*(ptr++) = ' ';
 		}
 	}
 	free(tmp);
 
-	*(--result) = 0;
+	*(--ptr) = 0;
 
-	*length = result - start_res;
+	*length = ptr - start;
 
-	return start_res;
+	return start;
+}
+
+my_bool ngram_deinit(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+	char *ptr = (char *) initid->ptr;
+
+	if (NULL != ptr) {
+		free(ptr);
+	}
+	return 0;
 }
 
 #if 1
