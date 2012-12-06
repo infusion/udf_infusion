@@ -673,7 +673,7 @@ char *ngram(UDF_INIT *initid, UDF_ARGS *args,
 		ptr = result;
 	} else if(NULL != initid->ptr) {
 		ptr = initid->ptr;
-	} else if (NULL == (ptr = lmalloc(initid->max_length))) {
+	} else if (NULL == (ptr = malloc(initid->max_length))) {
 		*is_null = 1;
 		return result;
 	} else {
