@@ -129,9 +129,15 @@ A 64 bit hash function for MySQL, implementing a FNV algorithm
 ```
 int fnv(string str);
 
-mysql> SELECT cast( fnv( str ) as unsigned ) from t1
+mysql> SELECT cast( fnv( str ) as unsigned ) from t1;
 ```
 
+Unfortunately, the UDF API doesn't support unsigned int return values. If you don't like the cast approach above, just add a stored function on your own:
+
+```
+CREATE FUNCTION ufnv(str TEXT) RETURNS INT UNSIGNED
+   RETURN cast( fnv( str ) as unsigned );
+```
 
 String Functions
 ----------------
