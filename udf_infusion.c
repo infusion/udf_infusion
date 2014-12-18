@@ -1879,7 +1879,7 @@ my_bool median_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	struct DoubleBuffer* data = NULL;
 
 	if (1 != args->arg_count) {
-		strcpy(message, "lessavg must have exactly one argument");
+		strcpy(message, "median must have exactly one argument");
 		return 1;
 	}
 
