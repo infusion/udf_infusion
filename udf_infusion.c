@@ -1581,6 +1581,10 @@ inline static void doublePush(struct DoubleBuffer *buffer, unsigned int step, do
 	data->sum = 0;							\
 	data->size = 32;						\
 	data->number = (double *) malloc(data->size * sizeof(*(data->number))); \
+	if (NULL == data->number) {				\
+		strcpy(message, "Memory allocation failed"); \
+		return 1;							\
+	}										\
 											\
 	initid->maybe_null = 1;					\
 	initid->ptr = (char*) data
@@ -1879,7 +1883,7 @@ my_bool median_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	struct DoubleBuffer* data = NULL;
 
 	if (1 != args->arg_count) {
-		strcpy(message, "lessavg must have exactly one argument");
+		strcpy(message, "median must have exactly one argument");
 		return 1;
 	}
 
