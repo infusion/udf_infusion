@@ -62,6 +62,14 @@ mysql> SELECT covariance(a, b) from t1;
 ```
 
 
+Calculate the correlation of two random variables
+```
+double corr(double x, double y);
+
+mysql> SELECT corr(a, b) from t1;
+```
+
+
 Get the first element of a group
 ```
 string group_first(string s);

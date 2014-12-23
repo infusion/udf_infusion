@@ -96,20 +96,20 @@ am__installdirs = "$(DESTDIR)$(libdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 udf_infusion_la_LIBADD =
 am_udf_infusion_la_OBJECTS = udf_infusion_la-bound.lo \
-	udf_infusion_la-bround.lo udf_infusion_la-covariance.lo \
-	udf_infusion_la-cut.lo udf_infusion_la-fnv.lo \
-	udf_infusion_la-getint.lo udf_infusion_la-group_first.lo \
-	udf_infusion_la-group_last.lo udf_infusion_la-invbit.lo \
-	udf_infusion_la-isbit.lo udf_infusion_la-kurtosis.lo \
-	udf_infusion_la-lessavg.lo udf_infusion_la-lesspartpct.lo \
-	udf_infusion_la-lesspart.lo udf_infusion_la-median.lo \
-	udf_infusion_la-ngram.lo udf_infusion_la-noverk.lo \
-	udf_infusion_la-rotbit.lo udf_infusion_la-rotint.lo \
-	udf_infusion_la-row_number.lo udf_infusion_la-rsumd.lo \
-	udf_infusion_la-rsumi.lo udf_infusion_la-setbit.lo \
-	udf_infusion_la-setint.lo udf_infusion_la-skewness.lo \
-	udf_infusion_la-slug.lo udf_infusion_la-_translate_string.lo \
-	udf_infusion_la-xround.lo
+	udf_infusion_la-bround.lo udf_infusion_la-corr.lo \
+	udf_infusion_la-covariance.lo udf_infusion_la-cut.lo \
+	udf_infusion_la-fnv.lo udf_infusion_la-getint.lo \
+	udf_infusion_la-group_first.lo udf_infusion_la-group_last.lo \
+	udf_infusion_la-invbit.lo udf_infusion_la-isbit.lo \
+	udf_infusion_la-kurtosis.lo udf_infusion_la-lessavg.lo \
+	udf_infusion_la-lesspartpct.lo udf_infusion_la-lesspart.lo \
+	udf_infusion_la-median.lo udf_infusion_la-ngram.lo \
+	udf_infusion_la-noverk.lo udf_infusion_la-rotbit.lo \
+	udf_infusion_la-rotint.lo udf_infusion_la-row_number.lo \
+	udf_infusion_la-rsumd.lo udf_infusion_la-rsumi.lo \
+	udf_infusion_la-setbit.lo udf_infusion_la-setint.lo \
+	udf_infusion_la-skewness.lo udf_infusion_la-slug.lo \
+	udf_infusion_la-_translate_string.lo udf_infusion_la-xround.lo
 udf_infusion_la_OBJECTS = $(am_udf_infusion_la_OBJECTS)
 udf_infusion_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(udf_infusion_la_CFLAGS) \
@@ -263,6 +263,7 @@ lib_LTLIBRARIES = udf_infusion.la
 udf_infusion_la_SOURCES = \
     bound.c \
     bround.c \
+    corr.c \
     covariance.c \
     cut.c \
     fnv.c \
@@ -371,6 +372,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/udf_infusion_la-_translate_string.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/udf_infusion_la-bound.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/udf_infusion_la-bround.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/udf_infusion_la-corr.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/udf_infusion_la-covariance.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/udf_infusion_la-cut.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/udf_infusion_la-fnv.Plo@am__quote@
@@ -431,6 +433,13 @@ udf_infusion_la-bround.lo: bround.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='bround.c' object='udf_infusion_la-bround.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(udf_infusion_la_CFLAGS) $(CFLAGS) -c -o udf_infusion_la-bround.lo `test -f 'bround.c' || echo '$(srcdir)/'`bround.c
+
+udf_infusion_la-corr.lo: corr.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(udf_infusion_la_CFLAGS) $(CFLAGS) -MT udf_infusion_la-corr.lo -MD -MP -MF $(DEPDIR)/udf_infusion_la-corr.Tpo -c -o udf_infusion_la-corr.lo `test -f 'corr.c' || echo '$(srcdir)/'`corr.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/udf_infusion_la-corr.Tpo $(DEPDIR)/udf_infusion_la-corr.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='corr.c' object='udf_infusion_la-corr.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(udf_infusion_la_CFLAGS) $(CFLAGS) -c -o udf_infusion_la-corr.lo `test -f 'corr.c' || echo '$(srcdir)/'`corr.c
 
 udf_infusion_la-covariance.lo: covariance.c
 @am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(udf_infusion_la_CFLAGS) $(CFLAGS) -MT udf_infusion_la-covariance.lo -MD -MP -MF $(DEPDIR)/udf_infusion_la-covariance.Tpo -c -o udf_infusion_la-covariance.lo `test -f 'covariance.c' || echo '$(srcdir)/'`covariance.c

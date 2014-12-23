@@ -3,6 +3,7 @@ lib_LTLIBRARIES = udf_infusion.la
 udf_infusion_la_SOURCES = \
     bound.c \
     bround.c \
+    corr.c \
     covariance.c \
     cut.c \
     fnv.c \

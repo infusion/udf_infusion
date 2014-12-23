@@ -19,6 +19,7 @@ create_function() {
 
 if_enable "bound" && create_function "bound" "real"
 if_enable "bround" && create_function "bround" "real"
+if_enable "corr" && create_agg_function "corr" "real"
 if_enable "covariance" && create_agg_function "covariance" "real"
 if_enable "cut" && create_function "cut" "string"
 if_enable "fnv" && create_function "fnv" "integer"

@@ -15,6 +15,7 @@ drop_function() {
 
 if_enable "bound" && drop_function "bound"
 if_enable "bround" && drop_function "bround"
+if_enable "corr" && drop_function "corr"
 if_enable "covariance" && drop_function "covariance"
 if_enable "cut" && drop_function "cut"
 if_enable "fnv" && drop_function "fnv"
