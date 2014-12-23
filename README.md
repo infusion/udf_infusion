@@ -3,27 +3,45 @@ MySQL Infusion UDF
 
 Description
 -----------
-The MySQL Infusion UDF is a functionality enhancement for MySQL. It provides a varity of new string, math and aggregate functions.
 
+The MySQL Infusion UDF is a functionality enhancement for MySQL.
+It provides a variety of new string, math and aggregate functions.
 
 Installation
 ------------
-In order to install the UDF, you need the MySQL header files installed on your machine. Additionally, you need GNU AWK (gawk). There is a very stupid Makefile with hard-coded paths, open the Makefile and adjust the things that are different to you. After that, all you need to do is:
-```
+
+In order to install the UDF, you need the MySQL header files installed
+on your machine.
+
+### Install
+
+To install MySQL Infusion UDF:
+
+```sh
 git clone https://github.com/infusion/udf_infusion.git
 cd udf_infusion
+./configure
 make
+sudo make install
+mysql <options> < load.sql
 ```
 
-If anything went okay, you can now use all of the following functions.
+You can choose to install only given UDF functions with a `./configure`
+option:
 
+```sh
+./configure --enable-functions="<list-of-functions>"
+```
 
+where `<list-of-functions>` is a space-separated list of function names.
 
+### Uninstall
 
+To uninstall:
 
-
-
-
+```sh
+mysql <options> < unload.sql
+```
 
 Aggregate Functions
 -------------------
