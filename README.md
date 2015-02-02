@@ -41,6 +41,7 @@ To uninstall:
 
 ```sh
 mysql <options> < unload.sql
+make uninstall
 ```
 
 Aggregate Functions
