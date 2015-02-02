@@ -31,4 +31,4 @@ test_clean:
 
 test: $(ALL_TESTS:%.test=%.run)
 
-.PHONY: test_prepare test_prepare_start test_prepare_sql test_results test
+.PHONY: test_prepare test_prepare_start example_table test_prepare_sql test_results test

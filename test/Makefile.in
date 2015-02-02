@@ -419,7 +419,7 @@ test_clean:
 
 test: $(ALL_TESTS:%.test=%.run)
 
-.PHONY: test_prepare test_prepare_start test_prepare_sql test_results test
+.PHONY: test_prepare test_prepare_start example_table test_prepare_sql test_results test
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
