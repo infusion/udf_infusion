@@ -45,4 +45,4 @@ if_enable "skewness" && drop_function "skewness"
 if_enable "slug" && drop_function "slug"
 if_enable "xround" && drop_function "xround"
 
-return 0
+true

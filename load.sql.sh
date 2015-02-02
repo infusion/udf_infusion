@@ -51,4 +51,4 @@ if_enable "skewness" && create_agg_function "skewness" "real"
 if_enable "slug" && create_function "slug" "string"
 if_enable "xround" && create_function "xround" "integer"
 
-return 0
+true
