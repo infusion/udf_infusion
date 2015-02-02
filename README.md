@@ -418,7 +418,7 @@ To prepare the testing environment (requires administrator rights in MySQL):
 make test_prepare
 ```
 
-This may take a while as sample data are generated and imported.
+This may take a while as sample data is generated and imported.
 Database `udf_infusion_test` is created and populated with generated data.
 
 Run tests with:
@@ -427,7 +427,7 @@ Run tests with:
 make test
 ```
 
-After completion, the temporary database can dropped with `test_clean`:
+After completion, the temporary database can be dropped with `test_clean`:
 
 ```
 make test_clean
