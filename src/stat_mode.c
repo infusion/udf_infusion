@@ -7,13 +7,13 @@ struct Buffer {
 };
 
 
-my_bool median_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+my_bool stat_mode_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
     struct Buffer *data;
 
     if (1 != args->arg_count) {
         snprintf(message, MYSQL_ERRMSG_SIZE,
-            "median must have exactly one argument");
+            "stat_mode must have exaclty one argument");
         return 1;
     }
 
@@ -37,13 +37,13 @@ my_bool median_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
     return 0;
 }
 
-void median_clear(UDF_INIT* initid, char* is_null, char *error)
+void stat_mode_clear(UDF_INIT* initid, char* is_null, char *error)
 {
     struct Buffer *data = (struct Buffer *) initid->ptr;
     array_truncate(&data->values);
 }
 
-void median_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
+void stat_mode_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
 {
     struct Buffer *data = (struct Buffer *) initid->ptr;
 
@@ -56,7 +56,7 @@ void median_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
     }
 }
 
-void median_deinit(UDF_INIT *initid)
+void stat_mode_deinit(UDF_INIT *initid)
 {
     struct Buffer *data = (struct Buffer *) initid->ptr;
     if (NULL != data) {
@@ -66,7 +66,13 @@ void median_deinit(UDF_INIT *initid)
     }
 }
 
-double median(UDF_INIT *initid, UDF_ARGS *args,
+static int compar(const void *pa, const void *pb) {
+    double a = *((double *) pa);
+    double b = *((double *) pb);
+    return a > b ? 1 : (a < b ? -1 : 0);
+}
+
+double stat_mode(UDF_INIT *initid, UDF_ARGS *args,
         char *is_null,
         char *error __attribute__((unused)))
 {
@@ -77,10 +83,30 @@ double median(UDF_INIT *initid, UDF_ARGS *args,
         return 0;
     }
 
-    if (data->values.n % 2 == 0) {
-        return _quantile(data->values.p, data->values.n, 0.5);
-    } else {
-        size_t k = (data->values.n - 1)/2;
-        return _quantile_disc(data->values.p, data->values.n, k);
+    qsort(data->values.p, data->values.n, sizeof(double), compar);
+
+    double mode = 0;
+    double value = 0;
+    size_t n = 0;
+    size_t k = 0;
+    size_t i = 0;
+
+    for (i = 0; i < data->values.n; i++) {
+        if (ARRAY_GET_DOUBLE(data->values, i) != value) {
+            value = ARRAY_GET_DOUBLE(data->values, i);
+            k = 0;
+        }
+        k++;
+        if (k > n) {
+            mode = value;
+            n = k;
+        }
     }
+
+    if (n == 0) {
+        *is_null = 1;
+        return 0;
+    }
+
+    return mode;
 }

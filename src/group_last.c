@@ -1,6 +1,13 @@
 #include "common.h"
 
 
+struct Buffer {
+    longlong length;
+    char *string;
+    char state;
+};
+
+
 my_bool group_last_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
     struct Buffer* data;

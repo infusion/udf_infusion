@@ -1,6 +1,7 @@
 lib_LTLIBRARIES = udf_infusion.la
 
 udf_infusion_la_SOURCES = \
+    array.c \
     bound.c \
     bround.c \
     corr.c \
@@ -17,8 +18,11 @@ udf_infusion_la_SOURCES = \
     lesspartpct.c \
     lesspart.c \
     median.c \
+    stat_mode.c \
     ngram.c \
     noverk.c \
+    percentile_cont.c \
+    percentile_disc.c \
     rotbit.c \
     rotint.c \
     row_number.c \
@@ -29,6 +33,7 @@ udf_infusion_la_SOURCES = \
     skewness.c \
     slug.c \
     _translate_string.c \
+    _quantile.cc \
     xround.c
 
 udf_infusion_la_CFLAGS = -DSTANDARD -DMYSQL_SERVER @MYSQL_CFLAGS@

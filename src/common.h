@@ -1,8 +1,12 @@
+#ifndef COMMON_H
+#define COMMON_H
+
 #ifdef STANDARD
 /* STANDARD is defined, don't use any mysql functions */
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #ifdef __WIN__
 typedef unsigned __int64 ulonglong; /* Microsofts 64 bit types */
 typedef __int64 longlong;
@@ -26,17 +30,13 @@ typedef long long longlong;
 #include <mysql.h>
 #include <ctype.h>
 
-
 #ifndef NOT_FIXED_DEC
 #define NOT_FIXED_DEC 31
 #endif
 
-
-struct Buffer {
-    longlong length;
-    char *string;
-    char state;
-};
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 struct DoubleBuffer {
     unsigned long used;
@@ -53,14 +53,19 @@ struct StatBuffer {
     double M4;
 };
 
-
-extern char *_translate_string(UDF_ARGS *args, char *result, unsigned long *length, char separator);
+extern char *_translate_string(UDF_ARGS *, char *, unsigned long *, char);
+extern double _quantile(double *, size_t, double);
+extern double _quantile_disc(double *, size_t, size_t);
 
 
 #define LESSSIZE()                          \
     if (data->size == data->used) {         \
         data->size<<= 1;                    \
         data->number = (double *) realloc(data->number, data->size * sizeof(*(data->number))); \
+        if (NULL == data->number) {         \
+            *error = 1;                     \
+            return;                         \
+        }                                   \
     }
 
 #define LESSINIT()                          \
@@ -182,3 +187,9 @@ inline static void doublePush(struct DoubleBuffer *buffer, unsigned int step, do
 
     data[step] = value;
 }
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* COMMON_H */

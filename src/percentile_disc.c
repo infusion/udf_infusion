@@ -4,20 +4,22 @@
 
 struct Buffer {
     struct array values;
+    double percentile;
 };
 
 
-my_bool median_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+my_bool percentile_disc_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
     struct Buffer *data;
 
-    if (1 != args->arg_count) {
+    if (2 != args->arg_count) {
         snprintf(message, MYSQL_ERRMSG_SIZE,
-            "median must have exactly one argument");
+            "percentile_disc must have exactly two arguments");
         return 1;
     }
 
     args->arg_type[0] = REAL_RESULT;
+    args->arg_type[1] = REAL_RESULT;
 
     data = calloc(1, sizeof(*data));
     if (NULL == data) {
@@ -37,15 +39,22 @@ my_bool median_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
     return 0;
 }
 
-void median_clear(UDF_INIT* initid, char* is_null, char *error)
+void percentile_disc_clear(UDF_INIT* initid, char* is_null, char *error)
 {
     struct Buffer *data = (struct Buffer *) initid->ptr;
     array_truncate(&data->values);
 }
 
-void median_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
+void percentile_disc_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
 {
     struct Buffer *data = (struct Buffer *) initid->ptr;
+
+    double percentile = *((double *) args->args[1]);
+    if (!(isfinite(percentile) && percentile >= 0 && percentile <= 1)) {
+        *error = 1;
+        return;
+    }
+    data->percentile = percentile;
 
     if (NULL == args->args[0])
         return;
@@ -56,7 +65,7 @@ void median_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
     }
 }
 
-void median_deinit(UDF_INIT *initid)
+void percentile_disc_deinit(UDF_INIT *initid)
 {
     struct Buffer *data = (struct Buffer *) initid->ptr;
     if (NULL != data) {
@@ -66,7 +75,7 @@ void median_deinit(UDF_INIT *initid)
     }
 }
 
-double median(UDF_INIT *initid, UDF_ARGS *args,
+double percentile_disc(UDF_INIT *initid, UDF_ARGS *args,
         char *is_null,
         char *error __attribute__((unused)))
 {
@@ -77,10 +86,6 @@ double median(UDF_INIT *initid, UDF_ARGS *args,
         return 0;
     }
 
-    if (data->values.n % 2 == 0) {
-        return _quantile(data->values.p, data->values.n, 0.5);
-    } else {
-        size_t k = (data->values.n - 1)/2;
-        return _quantile_disc(data->values.p, data->values.n, k);
-    }
+    size_t k = fmax(0, ceil(data->values.n*data->percentile) - 1);
+    return _quantile_disc(data->values.p, data->values.n, k);
 }

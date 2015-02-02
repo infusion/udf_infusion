@@ -1,0 +1,46 @@
+#!/usr/bin/env python
+"""
+test2result
+
+Parse a mysqltest test case and output expected result. This allows results
+to be inlined in the test file:
+
+* Lines starting with "#   " are treated as results and printed to the standard
+output.
+
+* Lines starting with "#   >>>" are evaluated as python snippets. The python
+environment is initialized from test_env.py.
+
+This script implements only simple grammar rules which are not entirely
+consistent with the mysqltest syntax.
+
+Usage: test2result < <name>.test > <name>.result
+"""
+
+import sys
+
+commands = [
+    'disable_abort_on_error',
+]
+
+env = {}
+execfile('test_env.py', env)
+
+for line in sys.stdin.readlines():
+    if line.startswith('#   >>> '):
+        try:
+            exec(line[8:], env)
+        except Exception:
+            print >> sys.stderr, line[8:]
+            raise
+    elif line.startswith('#   '):
+        sys.stdout.write(line[4:])
+    if line.strip() == '' or line.startswith('#') or line.startswith('--'):
+        continue
+    cmd = False
+    for c in commands:
+        if line.startswith(c):
+            cmd = True
+            break
+    if not cmd:
+        sys.stdout.write(line)

@@ -33,7 +33,7 @@ option:
 ./configure --enable-functions="<list-of-functions>"
 ```
 
-where `<list-of-functions>` is a space-separated list of function names.
+where `<list-of-functions>` is a list of function names separated by space.
 
 ### Uninstall
 
@@ -109,6 +109,25 @@ int lessavg(double m);
 mysql> SELECT lessavg(double m) from t1;
 ```
 
+
+Calculate continuous percentile. Returns the value at a relative position
+specified by the fraction, interpolating between input values if needed.
+```
+double percentile_cont(double x, double fraction);
+
+mysql> SELECT percentile_cont(x, 0.5) from t1;
+```
+
+
+Calculate discrete percentile. Returns the first input value whose relative
+position is greater than or equal to the specified fraction.
+```
+double percentile_disc(double x, double fraction);
+
+mysql> SELECT percentile_disc(x, 0.5) from t1;
+```
+
+
 Calculates the 3th statistical moment of a data set: skewness
 See: http://geography.uoregon.edu/geogr/topics/moments.htm
 ```
@@ -116,6 +135,15 @@ double skewness(double m);
 
 mysql> SELECT skewness(double m) from t1;
 ```
+
+
+Find statistical mode, i.e. the most frequent input value.
+```
+double stat_mode(double x);
+
+mysql> SELECT stat_mode(double x) from t1;
+```
+
 
 Calculates the 4th statistical moment of a data set: kurtosis
 See: http://geography.uoregon.edu/geogr/topics/moments.htm
@@ -356,6 +384,53 @@ mysql> SELECT SETINT(4283942, 4, 8, 10);
 1 row in set (0.00 sec)
 ```
 
+Testing
+=======
+
+udf_infusion contains a set of unit tests to verify the correctness
+of the provided UDF functions. Running them after installation is optional.
+
+Prerequisites:
+
+* Python 2.7
+* [numpy](http://www.numpy.org/)
+* [scipy](http://scipy.org/)
+
+**Note**: The testing framework requires all UDF functions to be enabled
+during installation.
+
+First, it is recommended you set connection details (incl. password) in
+`~/.my.cnf`, e.g.:
+
+```
+[client]
+user=<user>
+password=<password>
+```
+
+Alternatively, you can set options to be passed to the MySQL client
+in the `MYSQL_OPTIONS` environment variable.
+
+To prepare the testing environment (requires administrator rights in MySQL):
+
+```
+make test_prepare
+```
+
+This may take a while as sample data are generated and imported.
+Database `udf_infusion_test` is created and populated with generated data.
+
+Run tests with:
+
+```
+make test
+```
+
+After completion, the temporary database can dropped with `test_clean`:
+
+```
+make test_clean
+```
 
 License
 ======

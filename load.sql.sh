@@ -17,6 +17,8 @@ create_function() {
     echo "CREATE FUNCTION $1 RETURNS $2 SONAME 'udf_infusion.so';"
 }
 
+sh unload.sql.sh
+
 if_enable "bound" && create_function "bound" "real"
 if_enable "bround" && create_function "bround" "real"
 if_enable "corr" && create_agg_function "corr" "real"
@@ -33,8 +35,11 @@ if_enable "lessavg" && create_agg_function "lessavg" "integer"
 if_enable "lesspartpct" && create_agg_function "lesspartpct" "integer"
 if_enable "lesspart" && create_agg_function "lesspart" "integer"
 if_enable "median" && create_agg_function "median" "real"
+if_enable "stat_mode" && create_agg_function "stat_mode" "real"
 if_enable "ngram" && create_function "ngram" "string"
 if_enable "noverk" && create_function "noverk" "integer"
+if_enable "percentile_cont" && create_agg_function "percentile_cont" "real"
+if_enable "percentile_disc" && create_agg_function "percentile_disc" "real"
 if_enable "rotbit" && create_function "rotbit" "integer"
 if_enable "rotint" && create_function "rotint" "integer"
 if_enable "row_number" && create_function "row_number" "integer"

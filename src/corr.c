@@ -1,7 +1,7 @@
 #include "common.h"
 
 
-struct CorrBuffer {
+struct Buffer {
     size_t n;
     double x;
     double y;
@@ -13,18 +13,20 @@ struct CorrBuffer {
 
 my_bool corr_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
-    struct CorrBuffer *data;
+    struct Buffer *data;
 
     if (2 != args->arg_count) {
-        strcpy(message, "corr must have exaclty two arguments");
+        snprintf(message, MYSQL_ERRMSG_SIZE,
+            "corr must have exactly two arguments");
         return 1;
     }
 
     args->arg_type[0] = REAL_RESULT;
     args->arg_type[1] = REAL_RESULT;
 
-    if (NULL == (data = malloc(sizeof (*data)))) {
-        strcpy(message, "Memory allocation failed");
+    data = calloc(1, sizeof(*data));
+    if (NULL == data) {
+        snprintf(message, MYSQL_ERRMSG_SIZE, "Memory allocation failed");
         return 1;
     }
 
@@ -37,7 +39,7 @@ my_bool corr_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 
 void corr_clear(UDF_INIT* initid, char* is_null, char *error)
 {
-    struct CorrBuffer *data = (struct CorrBuffer *) initid->ptr;
+    struct Buffer *data = (struct Buffer *) initid->ptr;
 
     data->n = 0;
     data->x = 0;
@@ -49,7 +51,7 @@ void corr_clear(UDF_INIT* initid, char* is_null, char *error)
 
 void corr_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
 {
-    struct CorrBuffer *data = (struct CorrBuffer *) initid->ptr;
+    struct Buffer *data = (struct Buffer *) initid->ptr;
 
     if (NULL == args->args[0] || NULL == args->args[1])
         return;
@@ -67,10 +69,11 @@ void corr_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
 
 void corr_deinit(UDF_INIT *initid)
 {
-    struct CorrBuffer *data = (struct CorrBuffer *) initid->ptr;
+    struct Buffer *data = (struct Buffer *) initid->ptr;
 
-    if (data) {
+    if (NULL != data) {
         free(data);
+        data = NULL;
     }
 }
 
@@ -78,7 +81,7 @@ double corr(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
         char *is_null,
         char *error __attribute__((unused)))
 {
-    struct CorrBuffer *data = (struct CorrBuffer *) initid->ptr;
+    struct Buffer *data = (struct Buffer *) initid->ptr;
 
     if (data->n == 0 || data->xx == 0 || data->yy == 0) {
         *is_null = 1;

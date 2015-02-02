@@ -12,6 +12,7 @@ LT_PREREQ([2.2])
 LT_INIT([dlopen disable-static])
 
 AC_PROG_CC
+AC_PROG_CXX
 
 m4_include([m4/ax_lib_mysql.m4])
 AX_LIB_MYSQL(,,AC_MSG_ERROR("Can't find mysql library" ))
@@ -36,4 +37,4 @@ AC_ARG_ENABLE([functions], AS_HELP_STRING(
 
 AC_SUBST([enable_functions])
 
-AC_OUTPUT([Makefile src/Makefile])
+AC_OUTPUT([Makefile src/Makefile test/Makefile])
