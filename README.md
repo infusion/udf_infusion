@@ -10,10 +10,11 @@ It provides a variety of new string, math and aggregate functions.
 Installation
 ------------
 
-In order to install the UDF, you need the MySQL header files installed
-on your machine.
+Please make sure you have the following required software on your system
+before installation:
 
-### Install
+* C and C++ compiler
+* MySQL server, client and development files
 
 To install MySQL Infusion UDF:
 
@@ -26,16 +27,14 @@ sudo make install
 mysql <options> < load.sql
 ```
 
-You can choose to install only given UDF functions with a `./configure`
-option:
+You can choose to install only given UDF functions with the
+`--enable-functions` option:
 
 ```sh
 ./configure --enable-functions="<list-of-functions>"
 ```
 
 where `<list-of-functions>` is a list of function names separated by space.
-
-### Uninstall
 
 To uninstall:
 
