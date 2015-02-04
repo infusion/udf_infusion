@@ -1,6 +1,7 @@
 import numpy as np
 from numpy import ma
 import scipy as sp
+import scipy.stats
 
 
 def load_table(filename):
