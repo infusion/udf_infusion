@@ -18,7 +18,7 @@ udf_infusion_la_SOURCES = \
     lesspartpct.c \
     lesspart.c \
     median.c \
-    stat_mode.c \
+    stats_mode.c \
     ngram.c \
     noverk.c \
     percentile_cont.c \

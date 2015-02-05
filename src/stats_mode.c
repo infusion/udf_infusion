@@ -7,13 +7,13 @@ struct Buffer {
 };
 
 
-my_bool stat_mode_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+my_bool stats_mode_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
     struct Buffer *data;
 
     if (1 != args->arg_count) {
         snprintf(message, MYSQL_ERRMSG_SIZE,
-            "stat_mode must have exaclty one argument");
+            "stats_mode must have exaclty one argument");
         return 1;
     }
 
@@ -37,13 +37,13 @@ my_bool stat_mode_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
     return 0;
 }
 
-void stat_mode_clear(UDF_INIT* initid, char* is_null, char *error)
+void stats_mode_clear(UDF_INIT* initid, char* is_null, char *error)
 {
     struct Buffer *data = (struct Buffer *) initid->ptr;
     array_truncate(&data->values);
 }
 
-void stat_mode_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
+void stats_mode_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
 {
     struct Buffer *data = (struct Buffer *) initid->ptr;
 
@@ -56,7 +56,7 @@ void stat_mode_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
     }
 }
 
-void stat_mode_deinit(UDF_INIT *initid)
+void stats_mode_deinit(UDF_INIT *initid)
 {
     struct Buffer *data = (struct Buffer *) initid->ptr;
     if (NULL != data) {
@@ -72,7 +72,7 @@ static int compar(const void *pa, const void *pb) {
     return a > b ? 1 : (a < b ? -1 : 0);
 }
 
-double stat_mode(UDF_INIT *initid, UDF_ARGS *args,
+double stats_mode(UDF_INIT *initid, UDF_ARGS *args,
         char *is_null,
         char *error __attribute__((unused)))
 {

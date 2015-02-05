@@ -139,9 +139,9 @@ mysql> SELECT skewness(double m) from t1;
 
 Find statistical mode, i.e. the most frequent input value.
 ```
-double stat_mode(double x);
+double stats_mode(double x);
 
-mysql> SELECT stat_mode(double x) from t1;
+mysql> SELECT stats_mode(double x) from t1;
 ```
 
 
