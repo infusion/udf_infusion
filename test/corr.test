@@ -29,8 +29,3 @@ select g, corr(x, y) from small_table group by g;
 #   1	1
 #   2	NULL
 #   3	-0.8660254037844387
-
-select round(corr(x, y), 12) as `corr(x, y)` from example_table;
-#   corr(x, y)
-#   >>> mask = example_table()[:,0].mask | example_table()[:,1].mask
-#   >>> print '%.12f' % scipy.stats.pearsonr(example_table()[~mask,0], example_table()[~mask,1])[0]
