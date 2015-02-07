@@ -1,0 +1,59 @@
+disable_abort_on_error;
+
+use udf_infusion_test;
+
+select percentile_cont();
+#   ERROR HY000: Can't initialize function 'percentile_cont'; percentile_cont must have exactly two arguments
+
+select percentile_cont(1, 2, 3);
+#   ERROR HY000: Can't initialize function 'percentile_cont'; percentile_cont must have exactly two arguments
+
+select percentile_cont(NULL, 0.5);
+#   percentile_cont(NULL, 0.5)
+#   NULL
+
+select percentile_cont(x, 0.5) from empty_table;
+#   percentile_cont(x, 0.5)
+#   NULL
+
+select percentile_cont(x, 0.5) from null_table;
+#   percentile_cont(x, 0.5)
+#   NULL
+
+select percentile_cont(x, 0.5) from small_table;
+#   percentile_cont(x, 0.5)
+#   4.5
+
+select percentile_cont(x, 0) from small_table;
+#   percentile_cont(x, 0)
+#   1
+
+select percentile_cont(x, 1) from small_table;
+#   percentile_cont(x, 1)
+#   8
+
+select percentile_cont(x, 0.001) from small_table;
+#   percentile_cont(x, 0.001)
+#   1.007
+
+select percentile_cont(x, 0.999) from small_table;
+#   percentile_cont(x, 0.999)
+#   7.993
+
+select percentile_cont(x, 0.6) from small_table;
+#   percentile_cont(x, 0.6)
+#   5.2
+
+select g, percentile_cont(x, 0.7) from small_table group by g;
+#   g	percentile_cont(x, 0.7)
+#   1	1.7
+#   2	4.4
+#   3	7.4
+
+select round(percentile_cont(x, 0.7), 12) as `percentile_cont(x, 0.7)` from example_table;
+#   percentile_cont(x, 0.7)
+#   >>> print '%.12f' % np.percentile(example_table()[:,0].compressed(), 70)
+
+select round(percentile_cont(y, 0.7), 12) as `percentile_cont(y, 0.7)` from example_table;
+#   percentile_cont(y, 0.7)
+#   >>> print '%.12f' % np.percentile(example_table()[:,1].compressed(), 70)

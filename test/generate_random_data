@@ -1,0 +1,64 @@
+#!/usr/bin/env python
+"""Generate random data from a bivariate normal distribution with a small
+percentage of missing values. Missing values are indicated as 1e+20."""
+
+import os
+import sys
+import numpy as np
+from numpy import ma
+
+from numpy.random import multivariate_normal, uniform
+
+
+CHUNK_SIZE = 10000
+program_name = 'generate_random_data'
+
+
+def usage():
+    print >> sys.stderr, 'Usage: %s <nsamples>\n' % program_name
+    print >> sys.stderr, sys.modules[__name__].__doc__
+
+
+def generate_random_data(mean, var, size=1, missing_fraction=0):
+    data = multivariate_normal(mean, var, size)
+    mask = uniform(0, 1, (size, 2)) < missing_fraction
+    return ma.array(data, mask=mask)
+
+
+if __name__ == '__main__':
+    program_name = sys.argv[0]
+
+    if len(sys.argv) != 2:
+        usage()
+        sys.exit(1)
+
+    try:
+        nsamples = int(sys.argv[1])
+    except ValueError:
+        print >> sys.stderr, 'Number of samples must be an integer'
+        sys.exit(1)
+
+    if nsamples < 0:
+        print >> sys.stderr, 'Number of samples must be non-negative'
+        sys.exit(1)
+
+    log_progress = os.isatty(sys.stderr.fileno()) and \
+       not os.isatty(sys.stdout.fileno())
+
+    n = 0
+    if log_progress:
+       sys.stderr.write('  0 %')
+    while n < nsamples:
+        chunk_size = min(CHUNK_SIZE, nsamples - n)
+        chunk = generate_random_data(
+            [0, 1],
+            [[1, -0.7], [-0.7, 1]],
+            chunk_size,
+            missing_fraction=0.1
+        )
+        np.savetxt(sys.stdout, chunk.filled(1e+20))
+        n += chunk_size
+        if log_progress:
+            sys.stderr.write('\r%3d %%' % (100.0*n/nsamples))
+    if log_progress:
+       sys.stderr.write('\n')

@@ -1,0 +1,31 @@
+disable_abort_on_error;
+
+use udf_infusion_test;
+
+select corr();
+#   ERROR HY000: Can't initialize function 'corr'; corr must have exactly two arguments
+
+select corr(1, 2, 3);
+#   ERROR HY000: Can't initialize function 'corr'; corr must have exactly two arguments
+
+select corr(NULL, NULL);
+#   corr(NULL, NULL)
+#   NULL
+
+select corr(x, y) from empty_table;
+#   corr(x, y)
+#   NULL
+
+select corr(x, y) from null_table;
+#   corr(x, y)
+#   NULL
+
+select corr(x, y) from small_table;
+#   corr(x, y)
+#   -0.23469609321250473
+
+select g, corr(x, y) from small_table group by g;
+#   g	corr(x, y)
+#   1	1
+#   2	NULL
+#   3	-0.8660254037844387

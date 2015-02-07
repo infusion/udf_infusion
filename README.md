@@ -3,27 +3,45 @@ MySQL Infusion UDF
 
 Description
 -----------
-The MySQL Infusion UDF is a functionality enhancement for MySQL. It provides a varity of new string, math and aggregate functions.
 
+The MySQL Infusion UDF is a functionality enhancement for MySQL.
+It provides a variety of new string, math and aggregate functions.
 
 Installation
 ------------
-In order to install the UDF, you need the MySQL header files installed on your machine. Additionally, you need GNU AWK (gawk). There is a very stupid Makefile with hard-coded paths, open the Makefile and adjust the things that are different to you. After that, all you need to do is:
-```
+
+Please make sure you have the following required software on your system
+before installation:
+
+* C and C++ compiler
+* MySQL server, client and development files
+
+To install MySQL Infusion UDF:
+
+```sh
 git clone https://github.com/infusion/udf_infusion.git
 cd udf_infusion
+./configure
 make
+sudo make install
+mysql <options> < load.sql
 ```
 
-If anything went okay, you can now use all of the following functions.
+You can choose to install only given UDF functions with the
+`--enable-functions` option:
 
+```sh
+./configure --enable-functions="<list-of-functions>"
+```
 
+where `<list-of-functions>` is a list of function names separated by space.
 
+To uninstall:
 
-
-
-
-
+```sh
+mysql <options> < unload.sql
+make uninstall
+```
 
 Aggregate Functions
 -------------------
@@ -41,6 +59,14 @@ Calculate the co-variance of two random variables
 double covariance(double x, double y);
 
 mysql> SELECT covariance(a, b) from t1;
+```
+
+
+Calculate the correlation of two random variables
+```
+double corr(double x, double y);
+
+mysql> SELECT corr(a, b) from t1;
 ```
 
 
@@ -83,6 +109,25 @@ int lessavg(double m);
 mysql> SELECT lessavg(double m) from t1;
 ```
 
+
+Calculate continuous percentile. Returns the value at a relative position
+specified by the fraction, interpolating between input values if needed.
+```
+double percentile_cont(double x, double fraction);
+
+mysql> SELECT percentile_cont(x, 0.5) from t1;
+```
+
+
+Calculate discrete percentile. Returns the first input value whose relative
+position is greater than or equal to the specified fraction.
+```
+double percentile_disc(double x, double fraction);
+
+mysql> SELECT percentile_disc(x, 0.5) from t1;
+```
+
+
 Calculates the 3th statistical moment of a data set: skewness
 See: http://geography.uoregon.edu/geogr/topics/moments.htm
 ```
@@ -90,6 +135,15 @@ double skewness(double m);
 
 mysql> SELECT skewness(double m) from t1;
 ```
+
+
+Find statistical mode, i.e. the most frequent input value.
+```
+double stats_mode(double x);
+
+mysql> SELECT stats_mode(double x) from t1;
+```
+
 
 Calculates the 4th statistical moment of a data set: kurtosis
 See: http://geography.uoregon.edu/geogr/topics/moments.htm
@@ -330,6 +384,53 @@ mysql> SELECT SETINT(4283942, 4, 8, 10);
 1 row in set (0.00 sec)
 ```
 
+Testing
+=======
+
+udf_infusion contains a set of unit tests to verify the correctness
+of the provided UDF functions. Running them after installation is optional.
+
+Prerequisites:
+
+* Python 2.7
+* [numpy](http://www.numpy.org/)
+* [scipy](http://scipy.org/)
+
+**Note**: The testing framework requires all UDF functions to be enabled
+during installation.
+
+First, it is recommended you set connection details (incl. password) in
+`~/.my.cnf`, e.g.:
+
+```
+[client]
+user=<user>
+password=<password>
+```
+
+Alternatively, you can set options to be passed to the MySQL client
+in the `MYSQL_OPTIONS` environment variable.
+
+To prepare the testing environment (requires administrator rights in MySQL):
+
+```
+make test_prepare
+```
+
+This may take a while as sample data is generated and imported.
+Database `udf_infusion_test` is created and populated with generated data.
+
+Run tests with:
+
+```
+make test
+```
+
+After completion, the temporary database can be dropped with `test_clean`:
+
+```
+make test_clean
+```
 
 License
 ======

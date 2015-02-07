@@ -1,0 +1,25 @@
+disable_abort_on_error;
+
+use udf_infusion_test;
+
+select stats_mode();
+#   ERROR HY000: Can't initialize function 'stats_mode'; stats_mode must have exaclty one argument
+
+select stats_mode(1, 2);
+#   ERROR HY000: Can't initialize function 'stats_mode'; stats_mode must have exaclty one argument
+
+select stats_mode(NULL);
+#   stats_mode(NULL)
+#   NULL
+
+select stats_mode(x) from empty_table;
+#   stats_mode(x)
+#   NULL
+
+select stats_mode(x) from null_table;
+#   stats_mode(x)
+#   NULL
+
+select stats_mode(y) from small_table;
+#   stats_mode(y)
+#   -5
