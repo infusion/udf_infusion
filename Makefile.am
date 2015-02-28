@@ -21,4 +21,4 @@ unload:
 test test_prepare test_clean: all
 	cd test && $(MAKE) $(AM_MAKEFLAGS) $@
 
-.PHONY: load.sql unload.sql load unload test test_preapre test_clean
+.PHONY: load.sql unload.sql load unload test test_prepare test_clean
