@@ -106,6 +106,9 @@ char *_translate_string(UDF_ARGS *args, char *result, unsigned long *length, cha
             case EN(0x81c5): case EN(0x82c5):
                 ADD1I("l");
                 break;
+            case EN(0x84c5): case EN(0x83c5):
+                ADD1I("n");
+                break;
             default:
                 switch (c) {
                 case 223:
