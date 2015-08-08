@@ -70,7 +70,8 @@ char *_translate_string(UDF_ARGS *args, char *result, unsigned long *length, cha
             case EN(0xb3c3): case EN(0xb4c3):
             case EN(0xb5c3): case EN(0x92c3):
             case EN(0x93c3): case EN(0x94c3):
-            case EN(0x95c3):
+            case EN(0x95c3): case EN(0x98c3):
+            case EN(0xb8c3):
                 ADD1I("o");
                 break;
             case EN(0xb9c3): case EN(0xbac3):
