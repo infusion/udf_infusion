@@ -1,0 +1,22 @@
+disable_abort_on_error;
+
+use udf_infusion_test;
+
+select slug();
+#   ERROR HY000: Can't initialize function 'slug'; slug must have exaclty one argument
+
+select slug('Hello', 'Bello');
+#   ERROR HY000: Can't initialize function 'slug'; slug must have exaclty one argument
+
+select slug(NULL);
+#   slug(NULL)
+#   NULL
+
+select slug("Straße");
+#   slug("Straße")
+#   strasse
+
+select slug("Paweł");
+#   slug("Paweł")
+#   pawel
+
