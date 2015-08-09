@@ -43,7 +43,7 @@ char *cut(UDF_INIT *initid, UDF_ARGS *args,
         return result;
     }
 
-    for (; len < sl; len++) {
+    for (; p < sl; len++) {
 
         const unsigned char c = str[p];
 
@@ -67,12 +67,18 @@ char *cut(UDF_INIT *initid, UDF_ARGS *args,
             p += 3;
         else if ((c & 0xF8) == 0xF0)
             p += 4;
+        else {
+            // Broken UTF8
+            *is_null = 1;
+            return result;
+        }
     }
 
     // Calculate alloc size
+    int tmp_p = p; // Needed to check if resulting string is same as the original => omit ...
     int mem_size = p;
     char *ptr = result;
-    if (len > max) {
+    if (len == max && tmp_p != sl) {
 
         if (space != -1) {
             p = mem_size = space;
@@ -95,7 +101,7 @@ char *cut(UDF_INIT *initid, UDF_ARGS *args,
     memcpy(ptr, str, p);
 
     // Append dots
-    if (len > max) {
+    if (len == max && tmp_p != sl) {
         memcpy(ptr + p, c, cl);
     }
 
