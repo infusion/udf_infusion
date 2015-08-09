@@ -196,7 +196,9 @@ CREATE FUNCTION ufnv(str TEXT) RETURNS INT UNSIGNED
 String Functions
 ----------------
 
-Cuts a string if it's longer then a max value and appends "...". Words are not chopped.
+All string functions operate on UTF8 strings.
+
+Cuts a string if it's longer then a max value and appends "...". Words are not chopped as long as white spaces are present.
 ```
 string cut(string str, int num[, string x='...']);
 
