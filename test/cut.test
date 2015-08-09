@@ -1,0 +1,29 @@
+disable_abort_on_error;
+
+use udf_infusion_test;
+
+select cut();
+#   ERROR HY000: Can't initialize function 'cut'; cut must have two or three arguments
+
+select cut('Hello');
+#   ERROR HY000: Can't initialize function 'cut'; cut must have two or three arguments
+
+select cut(NULL, 15);
+#   cut(NULL, 15)
+#   NULL
+
+select cut("Hauptstraße", 10);
+#   cut("Hauptstraße", 10)
+#   Hauptstraß...
+
+SELECT cut('這是一個測試繁體中文',5);
+#   cut('這是一個測試繁體中文',5)
+#   這是一個測...
+
+select cut('There it is', 150);
+#   cut('There it is', 150)
+#   There it is
+
+select cut('Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 20);
+#   cut('Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 20)
+#   Lorem ipsum dolor...
