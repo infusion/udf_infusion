@@ -18,6 +18,7 @@ my_bool cut_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     initid->max_length = args->attribute_lengths[0];
     initid->const_item = 1;
     initid->maybe_null = 1;
+    initid->ptr = NULL;
 
     return 0;
 }
@@ -37,7 +38,7 @@ char *cut(UDF_INIT *initid, UDF_ARGS *args,
         cl = args->lengths[2];
     }
 
-    if (NULL == str || max + cl >= 255) {
+    if (NULL == str) {
         *is_null = 1;
         return result;
     }
@@ -68,22 +69,47 @@ char *cut(UDF_INIT *initid, UDF_ARGS *args,
             p += 4;
     }
 
-    if (len < max) {
-        memcpy(result, str, p);
-    } else {
+    // Calculate alloc size
+    int mem_size = p;
+    char *ptr = result;
+    if (len > max) {
 
         if (space != -1) {
-            p = space;
+            p = mem_size = space;
         }
-
-        memcpy(result, str, p);
-        memcpy(result + p, c, cl);
-        p += cl;
+        mem_size += cl;
     }
 
-    result[p] = 0;
-    *length = p;
+    // Alloc new memory if needed
+    if (mem_size >= 254) {
 
-    return result;
+        if (NULL == (ptr = malloc(mem_size + 1))) {
+            *is_null = 1;
+            return result;
+        } else {
+            initid->ptr = ptr;
+        }
+    }
+
+    // Copy argument
+    memcpy(ptr, str, p);
+
+    // Append dots
+    if (len > max) {
+        memcpy(ptr + p, c, cl);
+    }
+
+    ptr[mem_size] = 0;
+    *length = mem_size;
+
+    return ptr;
 }
 
+my_bool cut_deinit(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+    char *ptr = (char *) initid->ptr;
+
+    if (NULL != ptr) {
+        free(ptr);
+    }
+    return 0;
+}

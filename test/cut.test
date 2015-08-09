@@ -27,3 +27,7 @@ select cut('There it is', 150);
 select cut('Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 20);
 #   cut('Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 20)
 #   Lorem ipsum dolor...
+
+select cut(repeat("a", 300), 300);
+#   cut(repeat("a", 300), 300)
+#   aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
