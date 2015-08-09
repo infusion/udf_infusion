@@ -1,8 +1,6 @@
 #include "common.h"
 
-
-my_bool lessavg_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
-{
+my_bool lessavg_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     struct DoubleBuffer* data = NULL;
 
     if (1 != args->arg_count) {
@@ -17,13 +15,11 @@ my_bool lessavg_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
     return 0;
 }
 
-void lessavg_clear(UDF_INIT* initid, char* is_null, char *error)
-{
+void lessavg_clear(UDF_INIT* initid, char* is_null, char *error) {
     LESSCLEAR();
 }
 
-void lessavg_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
-{
+void lessavg_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
     struct DoubleBuffer *data = (struct DoubleBuffer *) initid->ptr;
     double value = *((double*) args->args[0]);
 
@@ -37,13 +33,11 @@ void lessavg_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
     data->used++;
 }
 
-void lessavg_deinit(UDF_INIT *initid)
-{
+void lessavg_deinit(UDF_INIT *initid) {
     LESSDEINIT();
 }
 
-longlong lessavg(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
-{
+longlong lessavg(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
     struct DoubleBuffer *data = (struct DoubleBuffer *) initid->ptr;
 
     ulonglong count = 0;
@@ -59,8 +53,8 @@ longlong lessavg(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
     ptr = &(data->number[data->used]);
 
     while (beg < ptr) {
-        count+= (*--ptr < limit);
-        count+= (*--ptr < limit); // new line saves the volatile pointer
+        count += (*--ptr < limit);
+        count += (*--ptr < limit); // new line saves the volatile pointer
     }
     return (longlong) count;
 }

@@ -1,8 +1,7 @@
 #include "common.h"
 
+my_bool rotbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
 
-my_bool rotbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
-{
     if (2 != args->arg_count) {
         strcpy(message, "rotbit must have exactly two arguments");
         return 1;
@@ -18,8 +17,8 @@ my_bool rotbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 
 longlong rotbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
         char *is_null,
-        char *error __attribute__((unused)))
-{
+        char *error __attribute__((unused))) {
+
     if (NULL == args->args[0] || NULL == args->args[1]) {
         *is_null = 1;
         return 0;

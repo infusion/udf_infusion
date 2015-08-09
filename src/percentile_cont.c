@@ -1,33 +1,30 @@
 #include "common.h"
 #include "array.h"
 
-
 struct Buffer {
     struct array values;
     double percentile;
 };
 
-
-my_bool percentile_cont_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
-{
+my_bool percentile_cont_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     struct Buffer *data;
 
     if (2 != args->arg_count) {
         snprintf(message, MYSQL_ERRMSG_SIZE,
-            "percentile_cont must have exactly two arguments");
+                "percentile_cont must have exactly two arguments");
         return 1;
     }
 
     args->arg_type[0] = REAL_RESULT;
     args->arg_type[1] = REAL_RESULT;
 
-    data = calloc(1, sizeof(*data));
+    data = calloc(1, sizeof (*data));
     if (NULL == data) {
         snprintf(message, MYSQL_ERRMSG_SIZE, "Memory allocation failed");
         return 1;
     }
 
-    if (NULL == array_init(&data->values, sizeof(double), 32)) {
+    if (NULL == array_init(&data->values, sizeof (double), 32)) {
         snprintf(message, MYSQL_ERRMSG_SIZE, "Memory allocation failed");
         return 1;
     }
@@ -39,14 +36,12 @@ my_bool percentile_cont_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
     return 0;
 }
 
-void percentile_cont_clear(UDF_INIT* initid, char* is_null, char *error)
-{
+void percentile_cont_clear(UDF_INIT* initid, char* is_null, char *error) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
     array_truncate(&data->values);
 }
 
-void percentile_cont_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
-{
+void percentile_cont_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
 
     double percentile = *((double *) args->args[1]);
@@ -65,8 +60,7 @@ void percentile_cont_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *
     }
 }
 
-void percentile_cont_deinit(UDF_INIT *initid)
-{
+void percentile_cont_deinit(UDF_INIT *initid) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
     if (NULL != data) {
         array_free(&data->values);
@@ -77,8 +71,7 @@ void percentile_cont_deinit(UDF_INIT *initid)
 
 double percentile_cont(UDF_INIT *initid, UDF_ARGS *args,
         char *is_null,
-        char *error __attribute__((unused)))
-{
+        char *error __attribute__((unused))) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
 
     if (data->values.n == 0) {

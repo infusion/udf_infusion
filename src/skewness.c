@@ -1,8 +1,6 @@
 #include "common.h"
 
-
-my_bool skewness_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
-{
+my_bool skewness_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     struct StatBuffer *data;
 
     if (1 != args->arg_count) {
@@ -24,8 +22,7 @@ my_bool skewness_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
     return 0;
 }
 
-void skewness_clear(UDF_INIT* initid, char* is_null, char *error)
-{
+void skewness_clear(UDF_INIT* initid, char* is_null, char *error) {
     struct StatBuffer *data = (struct StatBuffer *) initid->ptr;
 
     data->count = 0;
@@ -34,8 +31,7 @@ void skewness_clear(UDF_INIT* initid, char* is_null, char *error)
     data->M3 = 0;
 }
 
-void skewness_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
-{
+void skewness_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
     struct StatBuffer *data = (struct StatBuffer *) initid->ptr;
 
     if (NULL == args->args[0])
@@ -59,8 +55,7 @@ void skewness_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
     data->M2 = data->M2 + shorten;
 }
 
-void skewness_deinit(UDF_INIT *initid)
-{
+void skewness_deinit(UDF_INIT *initid) {
     struct StatBuffer *data = (struct StatBuffer *) initid->ptr;
 
     if (data) {
@@ -70,8 +65,7 @@ void skewness_deinit(UDF_INIT *initid)
 
 double skewness(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
         char *is_null,
-        char *error __attribute__((unused)))
-{
+        char *error __attribute__((unused))) {
 
     struct StatBuffer *data = (struct StatBuffer *) initid->ptr;
 
@@ -79,6 +73,5 @@ double skewness(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
         *is_null = 1;
         return 0;
     }
-
     return pow(data->count, 0.5) * data->M3 / pow(data->M2, 1.5);
 }

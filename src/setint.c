@@ -1,8 +1,6 @@
 #include "common.h"
 
-
-my_bool setint_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
-{
+my_bool setint_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     if (4 != args->arg_count) {
         strcpy(message, "setint must have exactly four arguments");
         return 1;
@@ -20,8 +18,8 @@ my_bool setint_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 
 longlong setint(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
         char *is_null,
-        char *error __attribute__((unused)))
-{
+        char *error __attribute__((unused))) {
+
     if (NULL == args->args[0] || NULL == args->args[1] || NULL == args->args[2] || NULL == args->args[3]) {
         *is_null = 1;
         return 0;

@@ -1,6 +1,5 @@
 #include "common.h"
 
-
 struct Buffer {
     size_t n;
     double x;
@@ -10,21 +9,19 @@ struct Buffer {
     double yy;
 };
 
-
-my_bool corr_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
-{
+my_bool corr_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     struct Buffer *data;
 
     if (2 != args->arg_count) {
         snprintf(message, MYSQL_ERRMSG_SIZE,
-            "corr must have exactly two arguments");
+                "corr must have exactly two arguments");
         return 1;
     }
 
     args->arg_type[0] = REAL_RESULT;
     args->arg_type[1] = REAL_RESULT;
 
-    data = calloc(1, sizeof(*data));
+    data = calloc(1, sizeof (*data));
     if (NULL == data) {
         snprintf(message, MYSQL_ERRMSG_SIZE, "Memory allocation failed");
         return 1;
@@ -37,8 +34,7 @@ my_bool corr_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
     return 0;
 }
 
-void corr_clear(UDF_INIT* initid, char* is_null, char *error)
-{
+void corr_clear(UDF_INIT* initid, char* is_null, char *error) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
 
     data->n = 0;
@@ -49,8 +45,7 @@ void corr_clear(UDF_INIT* initid, char* is_null, char *error)
     data->yy = 0;
 }
 
-void corr_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
-{
+void corr_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
 
     if (NULL == args->args[0] || NULL == args->args[1])
@@ -67,8 +62,7 @@ void corr_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error)
     data->yy += y*y;
 }
 
-void corr_deinit(UDF_INIT *initid)
-{
+void corr_deinit(UDF_INIT *initid) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
 
     if (NULL != data) {
@@ -79,8 +73,7 @@ void corr_deinit(UDF_INIT *initid)
 
 double corr(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
         char *is_null,
-        char *error __attribute__((unused)))
-{
+        char *error __attribute__((unused))) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
 
     if (data->n == 0 || data->xx == 0 || data->yy == 0) {
@@ -93,9 +86,9 @@ double corr(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
      * Cov(X, Y) = E((X - E(X))(Y - E(Y))) = E(XY) - E(X)E(Y))
      * D(X) = Cov(X, X) = E(XX) - E(X)^2
      */
-    double n_inv = 1./data->n;
-    double cov_xy = n_inv*(data->xy - n_inv*data->x*data->y);
-    double dx = n_inv*(data->xx - n_inv*data->x*data->x);
-    double dy = n_inv*(data->yy - n_inv*data->y*data->y);
-    return cov_xy/sqrt(dx*dy);
+    double n_inv = 1. / data->n;
+    double cov_xy = n_inv * (data->xy - n_inv * data->x * data->y);
+    double dx = n_inv * (data->xx - n_inv * data->x * data->x);
+    double dy = n_inv * (data->yy - n_inv * data->y * data->y);
+    return cov_xy / sqrt(dx * dy);
 }

@@ -38,24 +38,24 @@ typedef long long longlong;
 extern "C" {
 #endif
 
-struct DoubleBuffer {
+  struct DoubleBuffer {
     unsigned long used;
     unsigned long size;
     double *number;
     double sum;
-};
+  };
 
-struct StatBuffer {
+  struct StatBuffer {
     unsigned long count;
     double mean;
     double M2;
     double M3;
     double M4;
-};
+  };
 
-extern char *_translate_string(UDF_ARGS *, char *, unsigned long *, char);
-extern double _quantile(double *, size_t, double);
-extern double _quantile_disc(double *, size_t, size_t);
+  extern char *_translate_string(UDF_ARGS *, char *, unsigned long *, char);
+  extern double _quantile(double *, size_t, double);
+  extern double _quantile_disc(double *, size_t, size_t);
 
 
 #define LESSSIZE()                          \
@@ -141,38 +141,37 @@ extern double _quantile_disc(double *, size_t, size_t);
                                             \
     } while (1)
 
+  inline static unsigned int doubleSlot(struct DoubleBuffer *buffer, double value, int m, int n) {
 
-inline static unsigned int doubleSlot(struct DoubleBuffer *buffer, double value, int m, int n)
-{
     double *data = buffer->number;
 
     unsigned int i;
 
     if (0 == buffer->used) {
-        return 0;
+      return 0;
     }
 
     // TODO: Use binary search
 
     if (value >= data[buffer->used - 1]) {
-        return buffer->used;
+      return buffer->used;
     }
 
     if (value <= data[0]) {
-        return 0;
+      return 0;
     }
 
     for (i = 0; i < buffer->used - 1; i++) {
 
-        if (data[i] <= value && value <= data[1 + i]) {
-            return i + 1;
-        }
+      if (data[i] <= value && value <= data[1 + i]) {
+        return i + 1;
+      }
     }
     return buffer->used;
-}
+  }
 
-inline static void doublePush(struct DoubleBuffer *buffer, unsigned int step, double value)
-{
+  inline static void doublePush(struct DoubleBuffer *buffer, unsigned int step, double value) {
+
     double *data = buffer->number;
 
     /* About zero length of memmove()
@@ -186,7 +185,7 @@ inline static void doublePush(struct DoubleBuffer *buffer, unsigned int step, do
     memmove(&data[1 + step], &data[step], sizeof (*data) * (buffer->used - step));
 
     data[step] = value;
-}
+  }
 
 #ifdef __cplusplus
 }

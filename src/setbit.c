@@ -1,18 +1,17 @@
 #include "common.h"
 
+my_bool setbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
 
-my_bool setbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
-{
     switch (args->arg_count) {
-    case 3:
-        args->arg_type[2] = INT_RESULT;
-    case 2:
-        args->arg_type[0] = INT_RESULT;
-        args->arg_type[1] = INT_RESULT;
-        break;
-    default:
-        strcpy(message, "setbit must have two or three arguments");
-        return 1;
+        case 3:
+            args->arg_type[2] = INT_RESULT;
+        case 2:
+            args->arg_type[0] = INT_RESULT;
+            args->arg_type[1] = INT_RESULT;
+            break;
+        default:
+            strcpy(message, "setbit must have two or three arguments");
+            return 1;
     }
 
     initid->const_item = 1;
@@ -23,8 +22,8 @@ my_bool setbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 
 longlong setbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
         char *is_null,
-        char *error __attribute__((unused)))
-{
+        char *error __attribute__((unused))) {
+
     if (NULL == args->args[0] || NULL == args->args[1]) {
         *is_null = 1;
         return 0;

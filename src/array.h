@@ -6,10 +6,10 @@
 #define ARRAY_GET_DOUBLE(a, i) (*((double *) (a.p + a.size*i)))
 
 struct array {
-    void *p;
-    size_t n;
-    size_t size;
-    size_t n_alloc;
+  void *p;
+  size_t n;
+  size_t size;
+  size_t n_alloc;
 };
 
 extern struct array *array_init(struct array *, size_t, size_t);

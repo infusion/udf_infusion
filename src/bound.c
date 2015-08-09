@@ -1,8 +1,7 @@
 #include "common.h"
 
+my_bool bound_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
 
-my_bool bound_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
-{
     if (3 != args->arg_count) {
         strcpy(message, "bound must have exactly three arguments");
         return 1;
@@ -22,8 +21,7 @@ my_bool bound_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 
 double bound(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
         char *is_null,
-        char *error __attribute__((unused)))
-{
+        char *error __attribute__((unused))) {
     double *n, *x, *y;
 
     n = (double *) args->args[0];

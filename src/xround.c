@@ -1,19 +1,17 @@
 #include "common.h"
 
-
-my_bool xround_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
-{
+my_bool xround_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     if (1 != args->arg_count) {
         strcpy(message, "xround must have exactly one single argument");
         return 1;
     }
 
     switch (args->arg_type[0]) {
-    case STRING_RESULT:
-    case DECIMAL_RESULT:
-        args->arg_type[0] = REAL_RESULT;
-    default:
-        break;
+        case STRING_RESULT:
+        case DECIMAL_RESULT:
+            args->arg_type[0] = REAL_RESULT;
+        default:
+            break;
     }
     initid->const_item = 1;
     initid->maybe_null = 0;
@@ -22,10 +20,11 @@ my_bool xround_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 }
 
 #define RET_NEG(s) return (((s) ^ -f) + f)
+
 longlong xround(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
         char *is_null,
-        char *error __attribute__((unused)))
-{
+        char *error __attribute__((unused))) {
+
     longlong n, f = 0;
     double d;
 

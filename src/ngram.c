@@ -3,17 +3,17 @@
 
 #define MAX_GRAM 10
 
-my_bool ngram_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
-{
+my_bool ngram_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+
     switch (args->arg_count) {
-    case 2:
-        args->arg_type[1] = INT_RESULT;
-    case 1:
-        args->arg_type[0] = STRING_RESULT;
-        break;
-    default:
-        strcpy(message, "ngram must have one or two arguments");
-        return 1;
+        case 2:
+            args->arg_type[1] = INT_RESULT;
+        case 1:
+            args->arg_type[0] = STRING_RESULT;
+            break;
+        default:
+            strcpy(message, "ngram must have one or two arguments");
+            return 1;
     }
 
     initid->max_length = (args->lengths[0] + 1) * MAX_GRAM;
@@ -26,8 +26,8 @@ my_bool ngram_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 
 char *ngram(UDF_INIT *initid, UDF_ARGS *args,
         char *result, unsigned long *length,
-        char *is_null, char *error __attribute__((unused)))
-{
+        char *is_null, char *error __attribute__((unused))) {
+
     char *tmp, *ptr, *start;
 
     long i = -1, j, l, n = 2;
@@ -49,7 +49,7 @@ char *ngram(UDF_INIT *initid, UDF_ARGS *args,
 
     if (initid->max_length * n <= 255 * MAX_GRAM) {
         ptr = result;
-    } else if(NULL != initid->ptr) {
+    } else if (NULL != initid->ptr) {
         ptr = initid->ptr;
     } else if (NULL == (ptr = malloc(initid->max_length))) {
         *is_null = 1;
