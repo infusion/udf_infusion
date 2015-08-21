@@ -10,7 +10,6 @@ my_bool noverk_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     args->arg_type[0] = INT_RESULT;
     args->arg_type[1] = INT_RESULT;
     initid->const_item = 1;
-    initid->maybe_null = 1;
     initid->decimals = NOT_FIXED_DEC;
     initid->max_length = 20;
 
