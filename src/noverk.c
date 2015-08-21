@@ -26,21 +26,22 @@ longlong noverk(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
         return 0;
     }
 
-    longlong i, res = 1;
+    int i;
+    longlong res = 1;
 
     longlong n = *((longlong *) args->args[0]);
     longlong k = *((longlong *) args->args[1]);
 
-    if (!(k > 0 && n > 0 && n > k)) {
-        *is_null = 1;
+    if (n < k || k < 0) {
         return 0;
     }
 
+    k = k < (n - k) ? k : (n - k);
     n = n - k;
 
     for (i = 1; i <= k; i++) {
         res = res * (n + i) / i; // Simplified from res = res * (n - i + 1) / i
     }
-
     return res;
 }
+
