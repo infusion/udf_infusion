@@ -20,11 +20,11 @@ struct array * array_append(struct array *a, void *value) {
         if (NULL == p) {
             return NULL;
         }
-        memset(p + a->size * a->n_alloc, 0, a->size * (n_alloc - a->n_alloc));
+        memset((char *)p + a->size * a->n_alloc, 0, a->size * (n_alloc - a->n_alloc));
         a->p = p;
         a->n_alloc = n_alloc;
     }
-    memcpy(a->p + a->size * a->n, value, a->size);
+    memcpy((char *)a->p + a->size * a->n, value, a->size);
     a->n++;
     return a;
 }

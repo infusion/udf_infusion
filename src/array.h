@@ -3,7 +3,7 @@
 
 #include "common.h"
 
-#define ARRAY_GET_DOUBLE(a, i) (*((double *) (a.p + a.size*i)))
+#define ARRAY_GET_DOUBLE(a, i) (*((double *) ((char *)(a).p + (a).size*(i))))
 
 struct array {
   void *p;
