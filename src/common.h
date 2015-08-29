@@ -3,6 +3,9 @@
 
 #ifdef _MSC_VER
 #define __attribute__(x) 
+#ifndef __cplusplus
+#define inline __inline
+#endif
 #endif
 
 #ifdef STANDARD
