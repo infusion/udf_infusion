@@ -7,13 +7,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#ifdef __WIN__
+#if defined(__WIN__) || defined(_WIN32)
 typedef unsigned __int64 ulonglong; /* Microsofts 64 bit types */
 typedef __int64 longlong;
 #else
 typedef unsigned long long ulonglong;
 typedef long long longlong;
-#endif /*__WIN__*/
+#endif /* defined(__WIN__) || defined(_WIN32) */
 #else
 #include <my_global.h>
 #include <my_sys.h>
