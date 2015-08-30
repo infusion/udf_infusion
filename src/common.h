@@ -6,6 +6,35 @@
 #ifndef __cplusplus
 #define inline __inline
 #endif
+
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+
+/*
+http://pubs.opengroup.org/onlinepubs/9699919799/functions/strndup.html
+*/
+inline static char * strndup(const char *s, size_t n)
+{
+	char *result;
+	size_t len;
+
+	len = strlen(s);
+	if (n < len) {
+		len = n;
+	}
+#ifdef __cplusplus
+	result = static_cast<char *>(malloc(len + 1));
+#else
+	result = malloc(len + 1);
+#endif
+	if (!result) {
+		return 0;
+	}
+	memcpy(result, s, len);
+	result[len] = '\0';
+	return result;
+}
 #endif
 
 #ifdef STANDARD
