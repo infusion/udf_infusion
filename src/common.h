@@ -6,6 +6,7 @@
 #ifndef __cplusplus
 #define inline __inline
 #endif
+#define snprintf _snprintf
 
 #include <stddef.h>
 #include <stdlib.h>
