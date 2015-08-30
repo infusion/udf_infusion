@@ -91,11 +91,10 @@ char *ngram(UDF_INIT *initid, UDF_ARGS *args,
     return start;
 }
 
-my_bool ngram_deinit(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+void ngram_deinit(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     char *ptr = (char *) initid->ptr;
 
     if (NULL != ptr) {
         free(ptr);
     }
-    return 0;
 }

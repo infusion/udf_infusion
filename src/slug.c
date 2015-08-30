@@ -40,12 +40,11 @@ char *slug(UDF_INIT *initid, UDF_ARGS *args,
     return _translate_string(args, ptr, length, '_');
 }
 
-my_bool slug_deinit(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+void slug_deinit(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     char *ptr = (char *) initid->ptr;
 
     if (NULL != ptr) {
         free(ptr);
     }
-    return 0;
 }
 

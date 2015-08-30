@@ -111,11 +111,10 @@ char *cut(UDF_INIT *initid, UDF_ARGS *args,
     return ptr;
 }
 
-my_bool cut_deinit(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+void cut_deinit(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     char *ptr = (char *) initid->ptr;
 
     if (NULL != ptr) {
         free(ptr);
     }
-    return 0;
 }
