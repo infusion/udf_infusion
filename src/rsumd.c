@@ -1,6 +1,6 @@
 #include "common.h"
 
-my_bool rsumd_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+DLLEXPORT my_bool rsumd_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     double *data;
 
     if (1 != args->arg_count) {
@@ -23,7 +23,7 @@ my_bool rsumd_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     return 0;
 }
 
-double rsumd(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
+DLLEXPORT double rsumd(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
     double *data;
 
     if (initid->ptr) {
@@ -41,7 +41,7 @@ double rsumd(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
     return 0;
 }
 
-void rsumd_deinit(UDF_INIT *initid) {
+DLLEXPORT void rsumd_deinit(UDF_INIT *initid) {
 
     if (initid->ptr) {
         free(initid->ptr);

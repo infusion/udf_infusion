@@ -1,6 +1,6 @@
 #include "common.h"
 
-my_bool kurtosis_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+DLLEXPORT my_bool kurtosis_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
 
     struct StatBuffer *data;
 
@@ -58,7 +58,7 @@ void kurtosis_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) 
     data->M2 = data->M2 + shorten;
 }
 
-void kurtosis_deinit(UDF_INIT *initid) {
+DLLEXPORT void kurtosis_deinit(UDF_INIT *initid) {
     struct StatBuffer *data = (struct StatBuffer *) initid->ptr;
 
     if (data) {
@@ -66,7 +66,7 @@ void kurtosis_deinit(UDF_INIT *initid) {
     }
 }
 
-double kurtosis(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+DLLEXPORT double kurtosis(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
         char *is_null,
         char *error __attribute__((unused))) {
 

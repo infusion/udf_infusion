@@ -1,6 +1,6 @@
 #include "common.h"
 
-my_bool noverk_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+DLLEXPORT my_bool noverk_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
 
     if (2 != args->arg_count) {
         strcpy(message, "noverk must have exactly two arguments");
@@ -16,7 +16,7 @@ my_bool noverk_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     return 0;
 }
 
-longlong noverk(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+DLLEXPORT longlong noverk(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
         char *is_null,
         char *error __attribute__((unused))) {
 

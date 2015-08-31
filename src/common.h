@@ -2,6 +2,7 @@
 #define COMMON_H
 
 #ifdef _MSC_VER
+#define DLLEXPORT __declspec(dllexport)
 #define __attribute__(x) 
 #ifndef __cplusplus
 #define inline __inline
@@ -36,7 +37,9 @@ inline static char * strndup(const char *s, size_t n)
 	result[len] = '\0';
 	return result;
 }
-#endif
+#else /* _MSC_VER */
+#define DLLEXPORT 
+#endif /* _MSC_VER */
 
 #ifdef STANDARD
 /* STANDARD is defined, don't use any mysql functions */

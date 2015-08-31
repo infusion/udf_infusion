@@ -1,6 +1,6 @@
 #include "common.h"
 
-my_bool setbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+DLLEXPORT my_bool setbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
 
     switch (args->arg_count) {
         case 3:
@@ -20,7 +20,7 @@ my_bool setbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     return 0;
 }
 
-longlong setbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+DLLEXPORT longlong setbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
         char *is_null,
         char *error __attribute__((unused))) {
 

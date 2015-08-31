@@ -7,7 +7,7 @@ struct CovBuffer {
     unsigned count;
 };
 
-my_bool covariance_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+DLLEXPORT my_bool covariance_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     struct CovBuffer *data;
 
     if (2 != args->arg_count) {
@@ -55,7 +55,7 @@ void covariance_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error
     data->c += x * y;
 }
 
-void covariance_deinit(UDF_INIT *initid) {
+DLLEXPORT void covariance_deinit(UDF_INIT *initid) {
     struct CovBuffer *data = (struct CovBuffer *) initid->ptr;
 
     if (data) {
@@ -63,7 +63,7 @@ void covariance_deinit(UDF_INIT *initid) {
     }
 }
 
-double covariance(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+DLLEXPORT double covariance(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
         char *is_null,
         char *error __attribute__((unused))) {
     struct CovBuffer *data = (struct CovBuffer *) initid->ptr;

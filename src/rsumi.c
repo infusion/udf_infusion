@@ -1,6 +1,6 @@
 #include "common.h"
 
-my_bool rsumi_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+DLLEXPORT my_bool rsumi_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     longlong *data;
 
     if (1 != args->arg_count) {
@@ -23,7 +23,7 @@ my_bool rsumi_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     return 0;
 }
 
-longlong rsumi(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
+DLLEXPORT longlong rsumi(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
     longlong *data;
 
     if (initid->ptr) {
@@ -41,7 +41,7 @@ longlong rsumi(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
     return 0;
 }
 
-void rsumi_deinit(UDF_INIT *initid) {
+DLLEXPORT void rsumi_deinit(UDF_INIT *initid) {
     if (initid->ptr) {
         free(initid->ptr);
     }

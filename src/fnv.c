@@ -1,6 +1,6 @@
 #include "common.h"
 
-my_bool fnv_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+DLLEXPORT my_bool fnv_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     if (1 != args->arg_count) {
         strcpy(message, "fnv must have one argument");
         return 1;
@@ -14,7 +14,7 @@ my_bool fnv_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     return 0;
 }
 
-longlong fnv(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+DLLEXPORT longlong fnv(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
         char *is_null,
         char *error __attribute__((unused))) {
     char *str = args->args[0];

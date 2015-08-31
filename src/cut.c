@@ -1,6 +1,6 @@
 #include "common.h"
 
-my_bool cut_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+DLLEXPORT my_bool cut_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
 
     switch (args->arg_count) {
         case 3:
@@ -23,7 +23,7 @@ my_bool cut_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     return 0;
 }
 
-char *cut(UDF_INIT *initid, UDF_ARGS *args,
+DLLEXPORT char *cut(UDF_INIT *initid, UDF_ARGS *args,
         char *result, unsigned long *length,
         char *is_null, char *error __attribute__((unused))) {
 
@@ -111,7 +111,7 @@ char *cut(UDF_INIT *initid, UDF_ARGS *args,
     return ptr;
 }
 
-void cut_deinit(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+DLLEXPORT void cut_deinit(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     char *ptr = (char *) initid->ptr;
 
     if (NULL != ptr) {

@@ -1,6 +1,6 @@
 #include "common.h"
 
-my_bool row_number_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+DLLEXPORT my_bool row_number_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     longlong *data;
 
     if (0 != args->arg_count) {
@@ -21,7 +21,7 @@ my_bool row_number_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     return 0;
 }
 
-longlong row_number(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
+DLLEXPORT longlong row_number(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
     longlong *data;
 
     if (initid->ptr) {
@@ -33,7 +33,7 @@ longlong row_number(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error
     return 0;
 }
 
-void row_number_deinit(UDF_INIT *initid) {
+DLLEXPORT void row_number_deinit(UDF_INIT *initid) {
     if (initid->ptr) {
         free(initid->ptr);
     }

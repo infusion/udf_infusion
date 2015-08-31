@@ -1,6 +1,6 @@
 #include "common.h"
 
-my_bool bound_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+DLLEXPORT my_bool bound_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
 
     if (3 != args->arg_count) {
         strcpy(message, "bound must have exactly three arguments");
@@ -19,7 +19,7 @@ my_bool bound_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     return 0;
 }
 
-double bound(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+DLLEXPORT double bound(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
         char *is_null,
         char *error __attribute__((unused))) {
     double *n, *x, *y;

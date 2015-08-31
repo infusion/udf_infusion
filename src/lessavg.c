@@ -1,6 +1,6 @@
 #include "common.h"
 
-my_bool lessavg_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+DLLEXPORT my_bool lessavg_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     struct DoubleBuffer* data = NULL;
 
     if (1 != args->arg_count) {
@@ -33,11 +33,11 @@ void lessavg_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
     data->used++;
 }
 
-void lessavg_deinit(UDF_INIT *initid) {
+DLLEXPORT void lessavg_deinit(UDF_INIT *initid) {
     LESSDEINIT();
 }
 
-longlong lessavg(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
+DLLEXPORT longlong lessavg(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
     struct DoubleBuffer *data = (struct DoubleBuffer *) initid->ptr;
 
     ulonglong count = 0;

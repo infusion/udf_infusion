@@ -1,6 +1,6 @@
 #include "common.h"
 
-my_bool setint_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+DLLEXPORT my_bool setint_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     if (4 != args->arg_count) {
         strcpy(message, "setint must have exactly four arguments");
         return 1;
@@ -16,7 +16,7 @@ my_bool setint_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     return 0;
 }
 
-longlong setint(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+DLLEXPORT longlong setint(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
         char *is_null,
         char *error __attribute__((unused))) {
 

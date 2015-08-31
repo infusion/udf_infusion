@@ -1,6 +1,6 @@
 #include "common.h"
 
-my_bool isbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+DLLEXPORT my_bool isbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
 
     if (2 != args->arg_count) {
         strcpy(message, "isbit must have exactly two arguments");
@@ -15,7 +15,7 @@ my_bool isbit_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     return 0;
 }
 
-longlong isbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+DLLEXPORT longlong isbit(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
         char *is_null,
         char *error __attribute__((unused))) {
 
