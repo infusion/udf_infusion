@@ -36,14 +36,14 @@ DLLEXPORT my_bool group_last_init(UDF_INIT *initid, UDF_ARGS *args, char *messag
     return 0;
 }
 
-void group_last_clear(UDF_INIT* initid, char* is_null, char *error) {
+DLLEXPORT void group_last_clear(UDF_INIT* initid, char* is_null, char *error) {
     struct Buffer* data = (struct Buffer *) initid->ptr;
 
     data->length = 0;
     data->state = 0;
 }
 
-void group_last_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
+DLLEXPORT void group_last_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
 
     if (NULL != args->args[0]) {

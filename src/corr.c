@@ -34,7 +34,7 @@ DLLEXPORT my_bool corr_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     return 0;
 }
 
-void corr_clear(UDF_INIT* initid, char* is_null, char *error) {
+DLLEXPORT void corr_clear(UDF_INIT* initid, char* is_null, char *error) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
 
     data->n = 0;
@@ -45,7 +45,7 @@ void corr_clear(UDF_INIT* initid, char* is_null, char *error) {
     data->yy = 0;
 }
 
-void corr_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
+DLLEXPORT void corr_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
 
     if (NULL == args->args[0] || NULL == args->args[1])

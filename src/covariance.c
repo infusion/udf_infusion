@@ -30,7 +30,7 @@ DLLEXPORT my_bool covariance_init(UDF_INIT *initid, UDF_ARGS *args, char *messag
     return 0;
 }
 
-void covariance_clear(UDF_INIT* initid, char* is_null, char *error) {
+DLLEXPORT void covariance_clear(UDF_INIT* initid, char* is_null, char *error) {
     struct CovBuffer *data = (struct CovBuffer *) initid->ptr;
 
     data->count = 0;
@@ -39,7 +39,7 @@ void covariance_clear(UDF_INIT* initid, char* is_null, char *error) {
     data->c = 0;
 }
 
-void covariance_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
+DLLEXPORT void covariance_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
     struct CovBuffer *data = (struct CovBuffer *) initid->ptr;
 
     if (NULL == args->args[0] || NULL == args->args[1])

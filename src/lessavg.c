@@ -15,11 +15,11 @@ DLLEXPORT my_bool lessavg_init(UDF_INIT *initid, UDF_ARGS *args, char *message) 
     return 0;
 }
 
-void lessavg_clear(UDF_INIT* initid, char* is_null, char *error) {
+DLLEXPORT void lessavg_clear(UDF_INIT* initid, char* is_null, char *error) {
     LESSCLEAR();
 }
 
-void lessavg_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
+DLLEXPORT void lessavg_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
     struct DoubleBuffer *data = (struct DoubleBuffer *) initid->ptr;
     double value = *((double*) args->args[0]);
 

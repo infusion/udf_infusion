@@ -23,7 +23,7 @@ DLLEXPORT my_bool kurtosis_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
     return 0;
 }
 
-void kurtosis_clear(UDF_INIT* initid, char* is_null, char *error) {
+DLLEXPORT void kurtosis_clear(UDF_INIT* initid, char* is_null, char *error) {
     struct StatBuffer *data = (struct StatBuffer *) initid->ptr;
 
     data->count = 0;
@@ -33,7 +33,7 @@ void kurtosis_clear(UDF_INIT* initid, char* is_null, char *error) {
     data->M4 = 0;
 }
 
-void kurtosis_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
+DLLEXPORT void kurtosis_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
     struct StatBuffer *data = (struct StatBuffer *) initid->ptr;
 
     if (NULL == args->args[0])

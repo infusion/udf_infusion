@@ -34,12 +34,12 @@ DLLEXPORT my_bool stats_mode_init(UDF_INIT *initid, UDF_ARGS *args, char *messag
     return 0;
 }
 
-void stats_mode_clear(UDF_INIT* initid, char* is_null, char *error) {
+DLLEXPORT void stats_mode_clear(UDF_INIT* initid, char* is_null, char *error) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
     array_truncate(&data->values);
 }
 
-void stats_mode_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
+DLLEXPORT void stats_mode_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
 
     if (NULL == args->args[0])

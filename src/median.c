@@ -34,12 +34,12 @@ DLLEXPORT my_bool median_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     return 0;
 }
 
-void median_clear(UDF_INIT* initid, char* is_null, char *error) {
+DLLEXPORT void median_clear(UDF_INIT* initid, char* is_null, char *error) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
     array_truncate(&data->values);
 }
 
-void median_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
+DLLEXPORT void median_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
 
     if (NULL == args->args[0])

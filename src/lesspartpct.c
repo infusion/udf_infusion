@@ -16,11 +16,11 @@ DLLEXPORT my_bool lesspartpct_init(UDF_INIT *initid, UDF_ARGS *args, char *messa
     return 0;
 }
 
-void lesspartpct_clear(UDF_INIT* initid, char* is_null, char *error) {
+DLLEXPORT void lesspartpct_clear(UDF_INIT* initid, char* is_null, char *error) {
     LESSCLEAR();
 }
 
-void lesspartpct_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
+DLLEXPORT void lesspartpct_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
     int type = 1;
     LESSADD();
 }

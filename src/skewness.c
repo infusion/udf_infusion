@@ -22,7 +22,7 @@ DLLEXPORT my_bool skewness_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
     return 0;
 }
 
-void skewness_clear(UDF_INIT* initid, char* is_null, char *error) {
+DLLEXPORT void skewness_clear(UDF_INIT* initid, char* is_null, char *error) {
     struct StatBuffer *data = (struct StatBuffer *) initid->ptr;
 
     data->count = 0;
@@ -31,7 +31,7 @@ void skewness_clear(UDF_INIT* initid, char* is_null, char *error) {
     data->M3 = 0;
 }
 
-void skewness_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
+DLLEXPORT void skewness_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
     struct StatBuffer *data = (struct StatBuffer *) initid->ptr;
 
     if (NULL == args->args[0])

@@ -36,12 +36,12 @@ DLLEXPORT my_bool percentile_cont_init(UDF_INIT *initid, UDF_ARGS *args, char *m
     return 0;
 }
 
-void percentile_cont_clear(UDF_INIT* initid, char* is_null, char *error) {
+DLLEXPORT void percentile_cont_clear(UDF_INIT* initid, char* is_null, char *error) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
     array_truncate(&data->values);
 }
 
-void percentile_cont_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
+DLLEXPORT void percentile_cont_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
 
     double percentile = *((double *) args->args[1]);
