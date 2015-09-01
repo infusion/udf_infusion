@@ -9,7 +9,7 @@ struct Buffer {
     double yy;
 };
 
-my_bool corr_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+DLLEXPORT my_bool corr_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     struct Buffer *data;
 
     if (2 != args->arg_count) {
@@ -34,7 +34,7 @@ my_bool corr_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     return 0;
 }
 
-void corr_clear(UDF_INIT* initid, char* is_null, char *error) {
+DLLEXPORT void corr_clear(UDF_INIT* initid, char* is_null, char *error) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
 
     data->n = 0;
@@ -45,7 +45,7 @@ void corr_clear(UDF_INIT* initid, char* is_null, char *error) {
     data->yy = 0;
 }
 
-void corr_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
+DLLEXPORT void corr_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
 
     if (NULL == args->args[0] || NULL == args->args[1])
@@ -62,7 +62,7 @@ void corr_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
     data->yy += y*y;
 }
 
-void corr_deinit(UDF_INIT *initid) {
+DLLEXPORT void corr_deinit(UDF_INIT *initid) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
 
     if (NULL != data) {
@@ -71,7 +71,7 @@ void corr_deinit(UDF_INIT *initid) {
     }
 }
 
-double corr(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+DLLEXPORT double corr(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
         char *is_null,
         char *error __attribute__((unused))) {
     struct Buffer *data = (struct Buffer *) initid->ptr;

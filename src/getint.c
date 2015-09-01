@@ -1,6 +1,6 @@
 #include "common.h"
 
-my_bool getint_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+DLLEXPORT my_bool getint_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
 
     if (3 != args->arg_count) {
         strcpy(message, "getint must have exactly three arguments");
@@ -16,7 +16,7 @@ my_bool getint_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     return 0;
 }
 
-longlong getint(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+DLLEXPORT longlong getint(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
         char *is_null,
         char *error __attribute__((unused))) {
 

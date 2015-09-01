@@ -1,19 +1,59 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#ifdef _MSC_VER
+#define DLLEXPORT __declspec(dllexport)
+#define __attribute__(x) 
+#ifndef __cplusplus
+#define inline __inline
+#endif
+#define snprintf _snprintf
+
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+
+/*
+http://pubs.opengroup.org/onlinepubs/9699919799/functions/strndup.html
+*/
+inline static char * strndup(const char *s, size_t n)
+{
+	char *result;
+	size_t len;
+
+	len = strlen(s);
+	if (n < len) {
+		len = n;
+	}
+#ifdef __cplusplus
+	result = static_cast<char *>(malloc(len + 1));
+#else
+	result = malloc(len + 1);
+#endif
+	if (!result) {
+		return 0;
+	}
+	memcpy(result, s, len);
+	result[len] = '\0';
+	return result;
+}
+#else /* _MSC_VER */
+#define DLLEXPORT 
+#endif /* _MSC_VER */
+
 #ifdef STANDARD
 /* STANDARD is defined, don't use any mysql functions */
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#ifdef __WIN__
+#if defined(__WIN__) || defined(_WIN32)
 typedef unsigned __int64 ulonglong; /* Microsofts 64 bit types */
 typedef __int64 longlong;
 #else
 typedef unsigned long long ulonglong;
 typedef long long longlong;
-#endif /*__WIN__*/
+#endif /* defined(__WIN__) || defined(_WIN32) */
 #else
 #include <my_global.h>
 #include <my_sys.h>

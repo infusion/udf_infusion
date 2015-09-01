@@ -6,7 +6,7 @@ struct Buffer {
     double percentile;
 };
 
-my_bool percentile_disc_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+DLLEXPORT my_bool percentile_disc_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     struct Buffer *data;
 
     if (2 != args->arg_count) {
@@ -36,12 +36,12 @@ my_bool percentile_disc_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     return 0;
 }
 
-void percentile_disc_clear(UDF_INIT* initid, char* is_null, char *error) {
+DLLEXPORT void percentile_disc_clear(UDF_INIT* initid, char* is_null, char *error) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
     array_truncate(&data->values);
 }
 
-void percentile_disc_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
+DLLEXPORT void percentile_disc_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
 
     double percentile = *((double *) args->args[1]);
@@ -60,7 +60,7 @@ void percentile_disc_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *
     }
 }
 
-void percentile_disc_deinit(UDF_INIT *initid) {
+DLLEXPORT void percentile_disc_deinit(UDF_INIT *initid) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
     if (NULL != data) {
         array_free(&data->values);
@@ -69,7 +69,7 @@ void percentile_disc_deinit(UDF_INIT *initid) {
     }
 }
 
-double percentile_disc(UDF_INIT *initid, UDF_ARGS *args,
+DLLEXPORT double percentile_disc(UDF_INIT *initid, UDF_ARGS *args,
         char *is_null,
         char *error __attribute__((unused))) {
     struct Buffer *data = (struct Buffer *) initid->ptr;

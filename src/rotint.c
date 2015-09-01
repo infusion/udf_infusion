@@ -1,6 +1,6 @@
 #include "common.h"
 
-my_bool rotint_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+DLLEXPORT my_bool rotint_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
 
     if (4 != args->arg_count) {
         strcpy(message, "rotint must have exactly four arguments");
@@ -17,7 +17,7 @@ my_bool rotint_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     return 0;
 }
 
-longlong rotint(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+DLLEXPORT longlong rotint(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
         char *is_null,
         char *error __attribute__((unused))) {
 

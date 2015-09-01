@@ -1,6 +1,6 @@
 #include "common.h"
 
-my_bool xround_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+DLLEXPORT my_bool xround_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     if (1 != args->arg_count) {
         strcpy(message, "xround must have exactly one single argument");
         return 1;
@@ -21,7 +21,7 @@ my_bool xround_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
 
 #define RET_NEG(s) return (((s) ^ -f) + f)
 
-longlong xround(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
+DLLEXPORT longlong xround(UDF_INIT *initid __attribute__((unused)), UDF_ARGS *args,
         char *is_null,
         char *error __attribute__((unused))) {
 

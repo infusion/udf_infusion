@@ -1,0 +1,6 @@
+*.opensdf
+*.sdf
+*.suo
+/Debug/
+/Release/
+/x64/

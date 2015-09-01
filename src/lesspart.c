@@ -1,6 +1,6 @@
 #include "common.h"
 
-my_bool lesspart_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+DLLEXPORT my_bool lesspart_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     struct DoubleBuffer* data = NULL;
 
     if (2 != args->arg_count) {
@@ -16,20 +16,20 @@ my_bool lesspart_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     return 0;
 }
 
-void lesspart_clear(UDF_INIT* initid, char* is_null, char *error) {
+DLLEXPORT void lesspart_clear(UDF_INIT* initid, char* is_null, char *error) {
     LESSCLEAR();
 }
 
-void lesspart_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
+DLLEXPORT void lesspart_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
     int type = 0;
     LESSADD();
 }
 
-void lesspart_deinit(UDF_INIT *initid) {
+DLLEXPORT void lesspart_deinit(UDF_INIT *initid) {
     LESSDEINIT();
 }
 
-longlong lesspart(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
+DLLEXPORT longlong lesspart(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
     struct DoubleBuffer *data = (struct DoubleBuffer *) initid->ptr;
     double limit = *((double*) args->args[1]);
 

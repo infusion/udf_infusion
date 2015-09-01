@@ -3,7 +3,7 @@
 
 #define MAX_GRAM 10
 
-my_bool ngram_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+DLLEXPORT my_bool ngram_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
 
     switch (args->arg_count) {
         case 2:
@@ -24,7 +24,7 @@ my_bool ngram_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     return 0;
 }
 
-char *ngram(UDF_INIT *initid, UDF_ARGS *args,
+DLLEXPORT char *ngram(UDF_INIT *initid, UDF_ARGS *args,
         char *result, unsigned long *length,
         char *is_null, char *error __attribute__((unused))) {
 
@@ -91,11 +91,10 @@ char *ngram(UDF_INIT *initid, UDF_ARGS *args,
     return start;
 }
 
-my_bool ngram_deinit(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+DLLEXPORT void ngram_deinit(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     char *ptr = (char *) initid->ptr;
 
     if (NULL != ptr) {
         free(ptr);
     }
-    return 0;
 }
