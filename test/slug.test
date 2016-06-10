@@ -3,10 +3,11 @@ disable_abort_on_error;
 use udf_infusion_test;
 
 select slug();
-#   ERROR HY000: Can't initialize function 'slug'; slug must have exaclty one argument
+#   ERROR HY000: Can't initialize function 'slug'; slug must have one or two arguments
 
-select slug('Hello', 'Bello');
-#   ERROR HY000: Can't initialize function 'slug'; slug must have exaclty one argument
+select slug('Hello Boy', '-');
+#   slug('Hello Boy', '-')
+#   hello-boy
 
 select slug(NULL);
 #   slug(NULL)
