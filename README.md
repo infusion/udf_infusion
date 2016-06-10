@@ -214,9 +214,9 @@ mysql> SELECT cut('This is the funny world of MySQL...', 15);
 
 The old name of this function was makeurl but I renamed it to slug, because this seems to be the more official term for this one. The Wordpress Codex says this: A slug is a few words that describe a post or a page. Slugs are usually a URL friendly version of the post title [...], but a slug can be anything you like. Slugs are meant to be used with permalinks as they help describe what the content at the URL is.
 ```
-string slug(string str);
+string slug(string str[, char separator='_']);
 
-mysql> SELECT slug('Max Müller Straße!');
+mysql> SELECT slug('Max Müller Straße!', '-');
 +----------------------------+
 | slug('Max Müller Straße!') |
 +----------------------------+
