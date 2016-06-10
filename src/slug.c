@@ -2,12 +2,16 @@
 
 DLLEXPORT my_bool slug_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
 
-    if (1 != args->arg_count) {
-        strcpy(message, "slug must have exaclty one argument");
-        return 1;
+    switch (args->arg_count) {
+        case 2:
+            args->arg_type[1] = STRING_RESULT;
+        case 1:
+            args->arg_type[0] = STRING_RESULT;
+            break;
+        default:
+            strcpy(message, "slug must have one or two arguments");
+            return 1;
     }
-
-    args->arg_type[0] = STRING_RESULT;
 
     initid->max_length = args->lengths[0] * 2;
     initid->ptr = NULL;
@@ -37,7 +41,12 @@ DLLEXPORT char *slug(UDF_INIT *initid, UDF_ARGS *args,
     } else {
         initid->ptr = ptr;
     }
-    return _translate_string(args, ptr, length, '_');
+
+    if (args->arg_count == 2 && args->lengths[1] == 1) {
+        return _translate_string(args, ptr, length, args->args[1][0]);
+    } else {
+        return _translate_string(args, ptr, length, '_');
+    }
 }
 
 DLLEXPORT void slug_deinit(UDF_INIT *initid, UDF_ARGS *args, char *message) {
