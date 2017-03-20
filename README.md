@@ -436,4 +436,5 @@ make test_clean
 
 License
 ======
+Copyright (c) 2015, [Robert Eisele](http://www.xarg.org/)
 Licensed under GPL Version 2 license.
