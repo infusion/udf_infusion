@@ -15,7 +15,7 @@ DLLEXPORT my_bool cut_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
             return 1;
     }
 
-    initid->max_length = args->attribute_lengths[0];
+    initid->max_length = args->lengths[0];
     initid->const_item = 1;
     initid->maybe_null = 1;
     initid->ptr = NULL;
