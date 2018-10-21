@@ -74,6 +74,10 @@ typedef long long longlong;
 #define NOT_FIXED_DEC 31
 #endif
 
+#if MYSQL_VERSION_ID >= 80001
+typedef bool my_bool;
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
