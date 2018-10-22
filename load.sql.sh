@@ -1,3 +1,7 @@
+mysql_version="$1"
+mysql_version_major=`expr $mysql_version : '\([[0-9]]*\)'`
+shift
+
 [ $# -eq 0 ] && enable_all=1
 enable_functions="$@"
 
@@ -17,7 +21,7 @@ create_function() {
     echo "CREATE FUNCTION $1 RETURNS $2 SONAME 'udf_infusion.so';"
 }
 
-sh unload.sql.sh
+sh unload.sql.sh $mysql_version $enable_functions
 
 if_enable "bound" && create_function "bound" "real"
 if_enable "bround" && create_function "bround" "real"
@@ -42,7 +46,7 @@ if_enable "percentile_cont" && create_agg_function "percentile_cont" "real"
 if_enable "percentile_disc" && create_agg_function "percentile_disc" "real"
 if_enable "rotbit" && create_function "rotbit" "integer"
 if_enable "rotint" && create_function "rotint" "integer"
-if_enable "row_number" && create_function "row_number" "integer"
+if_enable "row_number" && test $mysql_version_major -lt 8 && create_function "row_number" "integer"
 if_enable "rsumd" && create_function "rsumd" "real"
 if_enable "rsumi" && create_function "rsumi" "integer"
 if_enable "setbit" && create_function "setbit" "integer"

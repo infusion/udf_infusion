@@ -780,10 +780,10 @@ uninstall-am:
 
 
 load.sql:
-	sh load.sql.sh $(enable_functions) > load.sql
+	sh load.sql.sh $(MYSQL_VERSION) $(enable_functions) > load.sql
 
 unload.sql:
-	sh unload.sql.sh $(enable_functions) > unload.sql
+	sh unload.sql.sh $(MYSQL_VERSION) $(enable_functions) > unload.sql
 
 load:
 	mysql $(MYSQL_OPTIONS) < load.sql
