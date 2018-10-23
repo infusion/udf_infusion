@@ -1,3 +1,7 @@
+mysql_version="$1"
+mysql_version_major=`expr $mysql_version : '\([[0-9]]*\)'`
+shift
+
 [ $# -eq 0 ] && enable_all=1
 enable_functions="$@"
 
@@ -36,7 +40,7 @@ if_enable "percentile_cont" && drop_function "percentile_cont"
 if_enable "percentile_disc" && drop_function "percentile_disc"
 if_enable "rotbit" && drop_function "rotbit"
 if_enable "rotint" && drop_function "rotint"
-if_enable "row_number" && drop_function "row_number"
+if_enable "row_number" && test $mysql_version_major -lt 8 && drop_function "row_number"
 if_enable "rsumd" && drop_function "rsumd"
 if_enable "rsumi" && drop_function "rsumi"
 if_enable "setbit" && drop_function "setbit"
