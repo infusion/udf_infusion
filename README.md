@@ -344,7 +344,7 @@ mysql> SELECT invbit(8, 2);
 ```
 
 
-Rotate the bits within the number
+Rotate (=shift to the left and append shifted-out bits to the right) the bits within the number
 ```
 int rotbit(int mask, int n);
 
