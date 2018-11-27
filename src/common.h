@@ -75,7 +75,11 @@ typedef long long longlong;
 #endif
 
 #if MYSQL_VERSION_ID >= 80001
+#ifdef __cplusplus
 typedef bool my_bool;
+#else
+typedef char my_bool;
+#endif
 #endif
 
 #ifdef __cplusplus
