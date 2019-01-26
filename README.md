@@ -16,6 +16,22 @@ before installation:
 * C and C++ compiler
 * MySQL server, client and development files
 
+## Installation of prerequisites
+
+Debian / Ubuntu
+
+```
+apt-get install libmysqlclient-dev build-essential
+```
+
+On CentOS / Fedora
+
+```
+yum install libtool
+yum install mysql-community-devel
+```
+
+
 To install MySQL Infusion UDF:
 
 ```sh
