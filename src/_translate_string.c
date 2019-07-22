@@ -40,7 +40,7 @@ char *_translate_string(UDF_ARGS *args, char *result, unsigned long *length, cha
                 case EN(0xa6c3): case EN(0x86c3):
                     ADD2I("ae");
                     break;
-                case EN(0x96c3): case EN(0xb6c3):
+                case EN(0x96c3): case EN(0xb6c3): case EN(0x91c5):
                     ADD2I("oe");
                     break;
                 case EN(0x9cc3): case EN(0xbcc3):
@@ -50,13 +50,14 @@ char *_translate_string(UDF_ARGS *args, char *result, unsigned long *length, cha
                 case EN(0xa2c3): case EN(0xa3c3):
                 case EN(0xa5c3): case EN(0x80c3):
                 case EN(0x81c3): case EN(0x82c3):
-                case EN(0x83c3): case EN(0x85c3):
+                case EN(0x83c3): case EN(0x85c3): case EN(0x83c4):
                     ADD1I("a");
                     break;
                 case EN(0xa8c3): case EN(0xa9c3):
                 case EN(0xaac3): case EN(0xabc3):
                 case EN(0x88c3): case EN(0x89c3):
                 case EN(0x8ac3): case EN(0x8bc3):
+                case EN(0x9BC4): case EN(0x99c4):
                     ADD1I("e");
                     break;
                 case EN(0xacc3): case EN(0xadc3):
@@ -76,7 +77,7 @@ char *_translate_string(UDF_ARGS *args, char *result, unsigned long *length, cha
                 case EN(0xb9c3): case EN(0xbac3):
                 case EN(0xbbc3): case EN(0x99c3):
                 case EN(0x9ac3): case EN(0x9bc3):
-                case EN(0xb5c2):
+                case EN(0xb5c2): case EN(0xafc5):
                     ADD1I("u");
                     break;
                 case EN(0x91c3): case EN(0xb1c3):
@@ -84,6 +85,7 @@ char *_translate_string(UDF_ARGS *args, char *result, unsigned long *length, cha
                     break;
                 case EN(0x87c3): case EN(0xa7c2):
                 case EN(0xa2c2): case EN(0xa7c3):
+                case EN(0x87c4): case EN(0x8dc4):
                     ADD1I("c");
                     break;
                 case EN(0x9ec3): case EN(0xbec3):
@@ -96,7 +98,7 @@ char *_translate_string(UDF_ARGS *args, char *result, unsigned long *length, cha
                 case EN(0x97c3):
                     ADD1I("x");
                     break;
-                case EN(0xaec2):
+                case EN(0xaec2): case EN(0x99c5):
                     ADD1I("r");
                     break;
                 case EN(0x90c3):
@@ -104,10 +106,22 @@ char *_translate_string(UDF_ARGS *args, char *result, unsigned long *length, cha
                     break;
                 case EN(0x81c5): case EN(0x82c5):
                     ADD1I("l");
+		    break;
+		case EN(0x9fc4):
+		    ADD1I("g");
                     break;
                 case EN(0x84c5): case EN(0x83c5):
                     ADD1I("n");
                     break;
+		case EN(0x99c8): case EN(0xa1c5):
+		    ADD1I("s");
+		    break;
+		case EN(0xa0c5): case EN(0x9ec5): case EN(0x9ac5):
+		    ADD1I("S");
+		    break;
+		case EN(0xbec5):
+		    ADD1I("z");
+		    break;
                 default:
                     switch (c) {
                         case 223:
