@@ -186,7 +186,6 @@
     <ClCompile Include="src\percentile_disc.c" />
     <ClCompile Include="src\rotbit.c" />
     <ClCompile Include="src\rotint.c" />
-    <ClCompile Include="src\row_number.c" />
     <ClCompile Include="src\rsumd.c" />
     <ClCompile Include="src\rsumi.c" />
     <ClCompile Include="src\setbit.c" />
