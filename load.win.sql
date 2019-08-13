@@ -54,7 +54,6 @@ CREATE AGGREGATE FUNCTION percentile_cont RETURNS real SONAME 'udf_infusion.dll'
 CREATE AGGREGATE FUNCTION percentile_disc RETURNS real SONAME 'udf_infusion.dll';
 CREATE FUNCTION rotbit RETURNS integer SONAME 'udf_infusion.dll';
 CREATE FUNCTION rotint RETURNS integer SONAME 'udf_infusion.dll';
-CREATE FUNCTION row_number RETURNS integer SONAME 'udf_infusion.dll';
 CREATE FUNCTION rsumd RETURNS real SONAME 'udf_infusion.dll';
 CREATE FUNCTION rsumi RETURNS integer SONAME 'udf_infusion.dll';
 CREATE FUNCTION setbit RETURNS integer SONAME 'udf_infusion.dll';
