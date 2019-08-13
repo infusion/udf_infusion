@@ -25,7 +25,6 @@ udf_infusion_la_SOURCES = \
     percentile_disc.c \
     rotbit.c \
     rotint.c \
-    row_number.c \
     rsumd.c \
     rsumi.c \
     setbit.c \
