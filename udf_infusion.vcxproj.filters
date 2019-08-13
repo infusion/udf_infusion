@@ -90,9 +90,6 @@
     <ClCompile Include="src\rotint.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\row_number.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\rsumd.c">
       <Filter>Source Files</Filter>
     </ClCompile>
