@@ -18,10 +18,16 @@ before installation:
 
 ## Installation of prerequisites
 
-Debian / Ubuntu
+Ubuntu
 
 ```
 apt-get install libmysqlclient-dev build-essential
+```
+
+Debian (uses MariaDB)
+
+```
+apt-get install default-libmysqlclient-dev build-essential
 ```
 
 On CentOS / Fedora
