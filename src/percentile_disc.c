@@ -6,12 +6,12 @@ struct Buffer {
     double percentile;
 };
 
-DLLEXPORT my_bool percentile_disc_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+DLLEXPORT my_bool percentile_discr_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     struct Buffer *data;
 
     if (2 != args->arg_count) {
         snprintf(message, MYSQL_ERRMSG_SIZE,
-                "percentile_disc must have exactly two arguments");
+                "percentile_discr must have exactly two arguments");
         return 1;
     }
 
@@ -36,12 +36,12 @@ DLLEXPORT my_bool percentile_disc_init(UDF_INIT *initid, UDF_ARGS *args, char *m
     return 0;
 }
 
-DLLEXPORT void percentile_disc_clear(UDF_INIT* initid, char* is_null, char *error) {
+DLLEXPORT void percentile_discr_clear(UDF_INIT* initid, char* is_null, char *error) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
     array_truncate(&data->values);
 }
 
-DLLEXPORT void percentile_disc_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
+DLLEXPORT void percentile_discr_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
 
     double percentile = *((double *) args->args[1]);
@@ -60,7 +60,7 @@ DLLEXPORT void percentile_disc_add(UDF_INIT* initid, UDF_ARGS* args, char* is_nu
     }
 }
 
-DLLEXPORT void percentile_disc_deinit(UDF_INIT *initid) {
+DLLEXPORT void percentile_discr_deinit(UDF_INIT *initid) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
     if (NULL != data) {
         array_free(&data->values);
@@ -69,7 +69,7 @@ DLLEXPORT void percentile_disc_deinit(UDF_INIT *initid) {
     }
 }
 
-DLLEXPORT double percentile_disc(UDF_INIT *initid, UDF_ARGS *args,
+DLLEXPORT double percentile_discr(UDF_INIT *initid, UDF_ARGS *args,
         char *is_null,
         char *error __attribute__((unused))) {
     struct Buffer *data = (struct Buffer *) initid->ptr;

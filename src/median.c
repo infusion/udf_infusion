@@ -5,12 +5,12 @@ struct Buffer {
     struct array values;
 };
 
-DLLEXPORT my_bool median_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+DLLEXPORT my_bool med_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     struct Buffer *data;
 
     if (1 != args->arg_count) {
         snprintf(message, MYSQL_ERRMSG_SIZE,
-                "median must have exactly one argument");
+                "med must have exactly one argument");
         return 1;
     }
 
@@ -34,12 +34,12 @@ DLLEXPORT my_bool median_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
     return 0;
 }
 
-DLLEXPORT void median_clear(UDF_INIT* initid, char* is_null, char *error) {
+DLLEXPORT void med_clear(UDF_INIT* initid, char* is_null, char *error) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
     array_truncate(&data->values);
 }
 
-DLLEXPORT void median_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
+DLLEXPORT void med_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char *error) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
 
     if (NULL == args->args[0])
@@ -51,7 +51,7 @@ DLLEXPORT void median_add(UDF_INIT* initid, UDF_ARGS* args, char* is_null, char 
     }
 }
 
-DLLEXPORT void median_deinit(UDF_INIT *initid) {
+DLLEXPORT void med_deinit(UDF_INIT *initid) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
     if (NULL != data) {
         array_free(&data->values);
@@ -60,7 +60,7 @@ DLLEXPORT void median_deinit(UDF_INIT *initid) {
     }
 }
 
-DLLEXPORT double median(UDF_INIT *initid, UDF_ARGS *args,
+DLLEXPORT double med(UDF_INIT *initid, UDF_ARGS *args,
         char *is_null,
         char *error __attribute__((unused))) {
     struct Buffer *data = (struct Buffer *) initid->ptr;
