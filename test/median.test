@@ -2,42 +2,42 @@ disable_abort_on_error;
 
 use udf_infusion_test;
 
-select median();
-#   ERROR HY000: Can't initialize function 'median'; median must have exactly one argument
+select med();
+#   ERROR HY000: Can't initialize function 'med'; med must have exactly one argument
 
-select median(1, 2);
-#   ERROR HY000: Can't initialize function 'median'; median must have exactly one argument
+select med(1, 2);
+#   ERROR HY000: Can't initialize function 'med'; med must have exactly one argument
 
-select median(NULL);
-#   median(NULL)
+select med(NULL);
+#   med(NULL)
 #   NULL
 
-select median(x) from empty_table;
-#   median(x)
+select med(x) from empty_table;
+#   med(x)
 #   NULL
 
-select median(x) from null_table;
-#   median(x)
+select med(x) from null_table;
+#   med(x)
 #   NULL
 
-select median(x) from small_table;
-#   median(x)
+select med(x) from small_table;
+#   med(x)
 #   4.5
 
-select median(x) from (select x from small_table where x is not null order by x limit 7) as t;
-#   median(x)
+select med(x) from (select x from small_table where x is not null order by x limit 7) as t;
+#   med(x)
 #   4
 
-select g, median(x) from small_table group by g;
-#   g	median(x)
+select g, med(x) from small_table group by g;
+#   g	med(x)
 #   1	1.5
 #   2	4
 #   3	7
 
-select round(median(x), 12) as `median(x)` from example_table;
-#   median(x)
-#   >>> print '%.12f' % ma.median(example_table()[:,0])
+select round(med(x), 12) as `med(x)` from example_table;
+#   med(x)
+#   >>> print '%.12f' % ma.med(example_table()[:,0])
 
-select round(median(y), 12) as `median(y)` from example_table;
-#   median(y)
-#   >>> print '%.12f' % ma.median(example_table()[:,1])
+select round(med(y), 12) as `med(y)` from example_table;
+#   med(y)
+#   >>> print '%.12f' % ma.med(example_table()[:,1])
