@@ -370,7 +370,7 @@ mysql> select rotbit(13, 1);
 
 
 Get a smaller integer from a bigger integer.
-See: http://www.xarg.org/2009/12/store-small-numbers-in-big-numbers/
+See: https://raw.org/article/store-small-numbers-in-big-numbers/
 ```
 int getint(int mask, int x, int y);
 
@@ -384,7 +384,7 @@ mysql> SELECT GETINT(4283942, 4, 8);
 ```
 
 Set a smaller integer into a bigger integer.
-See: http://www.xarg.org/2009/12/store-small-numbers-in-big-numbers/
+See: https://raw.org/article/store-small-numbers-in-big-numbers/
 ```
 int setint(int mask, int x, int y, int m);
 
@@ -447,5 +447,5 @@ make test_clean
 
 License
 ======
-Copyright (c) 2015, [Robert Eisele](http://www.xarg.org/)
+Copyright (c) 2015, [Robert Eisele](https://raw.org/)
 Licensed under GPL Version 2 license.
