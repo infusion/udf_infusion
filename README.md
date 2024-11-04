@@ -70,9 +70,9 @@ Aggregate Functions
 
 Get the median of a set
 ```
-double median(double n);
+double med(double n);
 
-mysql> SELECT median(weight) from t1;
+mysql> SELECT med(weight) from t1;
 ```
 
 
@@ -135,18 +135,18 @@ mysql> SELECT lessavg(double m) from t1;
 Calculate continuous percentile. Returns the value at a relative position
 specified by the fraction, interpolating between input values if needed.
 ```
-double percentile_cont(double x, double fraction);
+double percentile_contin(double x, double fraction);
 
-mysql> SELECT percentile_cont(x, 0.5) from t1;
+mysql> SELECT percentile_contin(x, 0.5) from t1;
 ```
 
 
 Calculate discrete percentile. Returns the first input value whose relative
 position is greater than or equal to the specified fraction.
 ```
-double percentile_disc(double x, double fraction);
+double percentile_discr(double x, double fraction);
 
-mysql> SELECT percentile_disc(x, 0.5) from t1;
+mysql> SELECT percentile_discr(x, 0.5) from t1;
 ```
 
 
